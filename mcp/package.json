@@ -1,15 +1,15 @@
 {
   "name": "@philotas/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Philotas MCP server — read-only tools over a Philotas deployment plus connector scaffolding.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/algolotl/philotas"
+    "url": "git+https://github.com/algolotl/philotas.git"
   },
   "bin": {
-    "philotas-mcp": "./bin/philotas-mcp.mjs"
+    "philotas-mcp": "bin/philotas-mcp.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"

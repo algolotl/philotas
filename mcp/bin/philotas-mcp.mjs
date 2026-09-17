@@ -18,7 +18,8 @@ export async function runDoctor({ env = process.env, stdout = process.stdout, fe
       await client.get('/api/status');
       checks.push({ check: 'GET /api/status returns 200', pass: true, detail: 'ok' });
     } catch (err) {
-      checks.push({ check: 'GET /api/status returns 200', pass: false, detail: (err && err.message ? err.message : String(err)) });
+      const detail = (err && err.message ? err.message : String(err)) + (err && err.status === 401 ? ' — deployment requires auth: set PHILOTAS_USER/PHILOTAS_PASSWORD or PHILOTAS_TOKEN' : '');
+      checks.push({ check: 'GET /api/status returns 200', pass: false, detail });
     }
   }
   for (const c of checks) {

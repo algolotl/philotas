@@ -4,7 +4,7 @@ import http from 'node:http';
 // Minimal in-process stub of the Philotas API for tests. Serves canned payloads
 // for the read-only endpoints the MCP tools call, echoing query params so tests
 // can assert the handlers forwarded them correctly.
-export function startStubApi({ statusCode = 200 } = {}) {
+export function startStubApi({ statusCode = 200, requireAuth = false, username = 'test', password = 'secret' } = {}) {
   return new Promise((resolve) => {
     const server = http.createServer((req, res) => {
       const url = new URL(req.url, 'http://localhost');
@@ -13,7 +13,39 @@ export function startStubApi({ statusCode = 200 } = {}) {
         res.end(JSON.stringify(body));
       };
 
+      if (url.pathname === '/api/auth/guest') {
+        if (req.method !== 'POST') return send(405, { error: 'method not allowed' });
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+          'Set-Cookie': 'parallax_session=stub-session; HttpOnly; Path=/; SameSite=Lax',
+        });
+        return res.end(JSON.stringify({ user: { username: 'guest' } }));
+      }
+      if (url.pathname === '/api/auth/login') {
+        if (req.method !== 'POST') return send(405, { error: 'method not allowed' });
+        let body = '';
+        req.on('data', (chunk) => (body += chunk));
+        req.on('end', () => {
+          let parsed = {};
+          try {
+            parsed = JSON.parse(body || '{}');
+          } catch {}
+          if (parsed.username === username && parsed.password === password) {
+            res.writeHead(200, {
+              'Content-Type': 'application/json',
+              'Set-Cookie': 'parallax_session=stub-session; HttpOnly; Path=/; SameSite=Lax',
+            });
+            res.end(JSON.stringify({ user: { username } }));
+          } else {
+            send(401, { error: 'invalid username or password' });
+          }
+        });
+        return;
+      }
       if (url.pathname === '/api/status') {
+        if (requireAuth && (req.headers.cookie || '') !== 'parallax_session=stub-session') {
+          return send(401, { error: 'authentication required' });
+        }
         if (statusCode !== 200) return send(statusCode, { error: 'status failed' });
         return send(200, {
           region: 'sydney',

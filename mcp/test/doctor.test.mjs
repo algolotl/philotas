@@ -51,3 +51,28 @@ test('doctor exits 1 when /api/status returns non-200', async () => {
     await api.close();
   }
 });
+
+
+test('doctor passes against a guarded deployment when credentials are provided', async () => {
+  const api = await startStubApi({ requireAuth: true });
+  try {
+    const res = await runDoctor({ PHILOTAS_URL: api.url, PHILOTAS_USER: 'test', PHILOTAS_PASSWORD: 'secret' });
+    assert.equal(res.code, 0);
+    assert.ok(res.out.includes('PASS GET /api/status'));
+  } finally {
+    await api.close();
+  }
+});
+
+test('doctor fails with an actionable hint when auth is required but missing', async () => {
+  const api = await startStubApi({ requireAuth: true });
+  try {
+    const res = await runDoctor({ PHILOTAS_URL: api.url });
+    assert.equal(res.code, 1);
+    assert.ok(res.out.includes('FAIL GET /api/status'));
+    assert.ok(res.out.includes('PHILOTAS_USER'));
+  } finally {
+    await api.close();
+  }
+});
+

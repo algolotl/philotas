@@ -30,6 +30,23 @@ philotas-mcp doctor
 Run the server from your Philotas checkout so scaffold_connector and run_tests
 operate on the project.
 
+### Authentication
+
+Deployments guard their API with sessions. Provide credentials one of three
+ways (env vars, read from the process environment):
+
+| Env | Meaning |
+| --- | --- |
+| PHILOTAS_TOKEN | a session token value, attached as the session cookie |
+| PHILOTAS_USER + PHILOTAS_PASSWORD | log in once at startup, reuse the session |
+| PHILOTAS_GUEST=1 | bootstrap a read-only guest session (trial deployments) |
+
+Against the public trial:
+
+```bash
+PHILOTAS_URL=https://trial.philotas.com PHILOTAS_GUEST=1 npx -y -p @philotas/mcp philotas-mcp doctor
+```
+
 ## Configuration
 
 ### Claude Desktop
