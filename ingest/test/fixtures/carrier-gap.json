@@ -1,0 +1,12 @@
+{
+  "mmsi": "477999888",
+  "name": "TEST CARRIER",
+  "note": "Regular 120s cadence heading due east, then silence.",
+  "points": [
+    { "timestamp_ms": 2000000, "position": [151.3000, -33.9500], "speed_over_ground_knots": 9.0, "course_over_ground_degrees": 90 },
+    { "timestamp_ms": 2120000, "position": [151.3100, -33.9500], "speed_over_ground_knots": 9.0, "course_over_ground_degrees": 90 },
+    { "timestamp_ms": 2240000, "position": [151.3200, -33.9500], "speed_over_ground_knots": 9.0, "course_over_ground_degrees": 90 },
+    { "timestamp_ms": 2360000, "position": [151.3300, -33.9500], "speed_over_ground_knots": 9.0, "course_over_ground_degrees": 90 },
+    { "timestamp_ms": 2480000, "position": [151.3400, -33.9500], "speed_over_ground_knots": 9.0, "course_over_ground_degrees": 90 }
+  ]
+}

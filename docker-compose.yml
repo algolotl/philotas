@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: Apache-2.0
+# Philotas compose stack: web app + Postgres, plus an optional "detect" profile
+# for the object-detection service.
+
+services:
+  app:
+    build: .
+    ports:
+      - "8788:8788"
+    environment:
+      PARALLAX_TRIAL: "0"
+      DATABASE_URL: "postgres://postgres:philotas@postgres:5432/philotas"
+    volumes:
+      - ./.data:/app/.data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: philotas
+      POSTGRES_DB: philotas
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d philotas"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  detect:
+    # Optional object-detection service. Enable with:
+    #   docker compose --profile detect up -d
+    #
+    # NOTE: this service needs a trained AutoGluon model — mount it at /models
+    # and keep AG_MODEL_DIR=/models — or an explicit ultralytics opt-in
+    # (DETECT_ENGINE=ultralytics). Without either it starts but reports no
+    # detection engine on /health.
+    profiles:
+      - detect
+    build: ./detect
+    ports:
+      - "8770:8770"
+    environment:
+      AG_MODEL_DIR: /models
+      DETECT_ENGINE: auto
+    volumes:
+      - ./detect/models:/models
+
+volumes:
+  postgres-data:

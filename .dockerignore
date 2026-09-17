@@ -1,0 +1,14 @@
+node_modules
+.next
+.data
+.git
+*.log
+.env.local
+tools/
+memories/
+docs/internal/
+LLM_UPDATE_*.md
+*.pt
+collateral/
+site/
+.superpowers/

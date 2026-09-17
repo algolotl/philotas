@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install and test mcp, root, ingest
+        run: |
+          cd mcp && npm ci && node --test "test/*.test.mjs"
+          cd .. && npm ci && npm test
+          cd ingest && npm ci && npm test
+
+  test-detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install detect and pytest
+        run: pip install -e ./detect pytest
+      - name: Run detect tests
+        run: pytest detect/test -v
+
+  license-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Forbid non-public and license-excluded strings
+        run: |
+          # Match the banned strings without writing them verbatim so this file
+          # does not trip its own gate (grep scans .github/workflows too).
+          if grep -riE 'osiri[s]|UNLICENSE[D]|idc-[1]|alexkovacesk[i]' \
+              --exclude-dir=node_modules \
+              --exclude-dir=.git \
+              --exclude-dir=.next \
+              --exclude-dir=.data \
+              --exclude-dir=docs .; then
+            echo "::error::forbidden string matched" >&2
+            exit 1
+          fi
+
+  pack-check:
+    needs: [test-node, test-detect]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Verify mcp npm package
+        run: cd mcp && npm pack --dry-run
+      - name: Verify detect PyPI package
+        run: |
+          cd detect
+          pip install build twine
+          python -m build --sdist --wheel --outdir dist
+          twine check dist/*

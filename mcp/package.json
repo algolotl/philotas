@@ -1,0 +1,38 @@
+{
+  "name": "philotas-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Philotas MCP server — read-only tools over a Philotas deployment plus connector scaffolding.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/algolotl/philotas"
+  },
+  "bin": {
+    "philotas-mcp": "./bin/philotas-mcp.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "keywords": [
+    "philotas",
+    "mcp",
+    "geospatial",
+    "common-operating-picture"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  }
+}

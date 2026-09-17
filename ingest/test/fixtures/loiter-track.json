@@ -1,0 +1,13 @@
+{
+  "mmsi": "636019999",
+  "name": "TEST LOITERER",
+  "note": "Arrives under way, then holds near-stationary for 20min in open water.",
+  "points": [
+    { "timestamp_ms": 3000000, "position": [151.2600, -33.8300], "speed_over_ground_knots": 11.0, "course_over_ground_degrees": 180 },
+    { "timestamp_ms": 3300000, "position": [151.2610, -33.8320], "speed_over_ground_knots": 0.4, "course_over_ground_degrees": 180 },
+    { "timestamp_ms": 3600000, "position": [151.2612, -33.8322], "speed_over_ground_knots": 0.2, "course_over_ground_degrees": 175 },
+    { "timestamp_ms": 3900000, "position": [151.2611, -33.8321], "speed_over_ground_knots": 0.3, "course_over_ground_degrees": 200 },
+    { "timestamp_ms": 4200000, "position": [151.2613, -33.8323], "speed_over_ground_knots": 0.1, "course_over_ground_degrees": 160 },
+    { "timestamp_ms": 4500000, "position": [151.2612, -33.8320], "speed_over_ground_knots": 0.2, "course_over_ground_degrees": 190 }
+  ]
+}

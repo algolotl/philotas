@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: Apache-2.0
+# Packaging metadata for the Philotas object-detection service (PyPI name:
+# philotas-detect). Built as a wheel shipping the top-level `service` and
+# `train` modules.
+#
+# NOTE: model weights are never included in the wheel. Operators supply their own
+# trained AutoGluon model directory (AG_MODEL_DIR) or opt in to ultralytics YOLO
+# weights (YOLO_MODEL) at runtime — see README.md.
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "philotas-detect"
+version = "0.1.0"
+description = "Object detection service for Philotas (AutoGluon default; ultralytics opt-in)"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "httpx>=0.27",
+    "pillow>=10.0",
+    "python-multipart>=0.0.9",
+    "numpy",
+    "opencv-python-headless>=4.9",
+    "pandas>=2.0",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.optional-dependencies]
+autogluon = ["autogluon.multimodal"]
+ultralytics = ["ultralytics>=8.2"]
+
+[project.urls]
+Homepage = "https://philotas.com"
+Repository = "https://github.com/algolotl/philotas"
+
+[tool.setuptools]
+py-modules = ["service", "train"]
+
+[tool.setuptools.package-dir]
+"" = "."

@@ -1,0 +1,146 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install and test mcp, root, ingest
+        run: |
+          cd mcp && npm ci && node --test "test/*.test.mjs"
+          cd .. && npm ci && npm test
+          cd ingest && npm ci && npm test
+
+  test-detect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install detect and pytest
+        run: pip install -e ./detect pytest
+      - name: Run detect tests
+        run: pytest detect/test -v
+
+  mcp-publish:
+    needs: test-node
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+      - name: Install
+        run: cd mcp && npm ci
+      # First release: the philotas-mcp package must already exist on npm with
+      # trusted publishing configured for this repository — see mcp/README.md.
+      - name: Publish to npm
+        run: cd mcp && npm publish --provenance
+
+  detect-publish:
+    needs: test-detect
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Build distributions
+        run: |
+          cd detect
+          pip install build
+          python -m build --sdist --wheel --outdir dist
+      # First release: the philotas-detect project must already exist on PyPI
+      # with a trusted publisher configured for this repository — see detect/README.md.
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: detect/dist
+
+  images:
+    needs: test-node
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push philotas image
+        id: philotas-app
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ghcr.io/algolotl/philotas:latest
+            ghcr.io/algolotl/philotas:${{ github.ref_name }}
+      - name: Build and push philotas-detect image
+        id: philotas-detect
+        uses: docker/build-push-action@v6
+        with:
+          context: ./detect
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ghcr.io/algolotl/philotas-detect:latest
+            ghcr.io/algolotl/philotas-detect:${{ github.ref_name }}
+      # Sign the published images with cosign (keyless). Enable after configuring
+      # the repo for Sigstore signing; the digest references come from the
+      # build-push-action outputs:
+      # - name: Install cosign
+      #   uses: sigstore/cosign-installer@v3
+      # - name: Sign images
+      #   run: |
+      #     cosign sign --yes ghcr.io/algolotl/philotas@${{ steps.philotas-app.outputs.digest }}
+      #     cosign sign --yes ghcr.io/algolotl/philotas-detect@${{ steps.philotas-detect.outputs.digest }}
+
+  verify:
+    needs: [mcp-publish, detect-publish, images]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify npm release version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          NPM_VER="$(npm view philotas-mcp version)"
+          echo "npm philotas-mcp = ${NPM_VER} (expected ${TAG})"
+          if [ "${NPM_VER}" != "${TAG}" ]; then
+            echo "::error::npm version mismatch" >&2
+            exit 1
+          fi
+      - name: Verify PyPI release version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PYPI_VER="$(curl -s https://pypi.org/pypi/philotas-detect/json | python3 -c 'import sys, json; print(json.load(sys.stdin)["info"]["version"])')"
+          echo "PyPI philotas-detect = ${PYPI_VER} (expected ${TAG})"
+          if [ "${PYPI_VER}" != "${TAG}" ]; then
+            echo "::error::PyPI version mismatch" >&2
+            exit 1
+          fi

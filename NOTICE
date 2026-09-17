@@ -1,0 +1,33 @@
+Philotas
+Copyright 2026 Algolotl
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this software except in compliance with the License. You may obtain a copy of
+the License at https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+---
+
+Third-party data attribution (informational; not a licence to this software):
+
+This software displays data retrieved at runtime from third-party sources, owned
+by their respective providers — including OpenSky Network, the adsb.fi community
+network, CelesTrak, Transport Canberra, NSW Rural Fire Service, the U.S.
+Geological Survey, Geoscience Australia, the Australian Bureau of Meteorology,
+The GDELT Project, NASA JPL (Deep Space Network) and NASA EONET.
+
+The OpenSky Network's terms restrict its data to non-profit research and
+education; a live operational deployment requires a written licence from
+OpenSky. This software treats OpenSky as an opt-in, bring-your-own-credentials
+source and never enables it by default.
+
+Fire hotspot detections are courtesy of NASA's Land, Atmosphere Near real-time
+Capability for EOS (LANCE, https://earthdata.nasa.gov/lance), part of NASA's
+Earth Observing System Data and Information System (EOSDIS). NASA does not
+endorse this product. Base map tiles
+© CARTO and © OpenStreetMap contributors. Review each provider's terms before
+relying on their data.

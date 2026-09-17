@@ -1,0 +1,47 @@
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy site files (one scp per file)
+        env:
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          set -eo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          HOST="$DEPLOY_USER@$DEPLOY_HOST"
+          DEST="$HOST:/home/algolotl/philotas/site/"
+          ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new "$HOST" "mkdir -p /home/algolotl/philotas/site/assets"
+
+          # scp one file per command. Passing two source paths to a single scp
+          # flattens directory structure (recorded trap) — never combine paths.
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new index.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new get-started.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new licensing.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new pricing.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new enterprise.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new contributing.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new security.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new community.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new 404.html "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new robots.txt "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new sitemap.xml "$DEST"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new assets/favicon.svg "$DEST/assets/"
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking=accept-new assets/bb-logo.png "$DEST/assets/"
+
+      - name: Verify site is live and report Last-Modified
+        run: |
+          set -eo pipefail
+          curl -sf -D - https://philotas.com/ -o /dev/null | grep -i '^last-modified:' || echo "Last-Modified: (header absent)"

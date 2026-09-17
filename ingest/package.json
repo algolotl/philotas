@@ -1,0 +1,17 @@
+{
+  "name": "philotas-ingest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Philotas — AIS ingest service and deterministic detectors.",
+  "license": "Apache-2.0",
+  "author": "Algolotl",
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1",
+    "gtfs-realtime-bindings": "^1.1.1"
+  }
+}

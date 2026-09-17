@@ -1,0 +1,13 @@
+{
+  "mmsi": "503123456",
+  "name": "FERRY REGULAR",
+  "note": "Dense regular reporter, 30s cadence. Manly run shape.",
+  "points": [
+    { "timestamp_ms": 1000000, "position": [151.2108, -33.8610], "speed_over_ground_knots": 12.0, "course_over_ground_degrees": 45 },
+    { "timestamp_ms": 1030000, "position": [151.2140, -33.8580], "speed_over_ground_knots": 12.2, "course_over_ground_degrees": 45 },
+    { "timestamp_ms": 1060000, "position": [151.2172, -33.8550], "speed_over_ground_knots": 12.1, "course_over_ground_degrees": 45 },
+    { "timestamp_ms": 1090000, "position": [151.2204, -33.8520], "speed_over_ground_knots": 11.9, "course_over_ground_degrees": 45 },
+    { "timestamp_ms": 1120000, "position": [151.2236, -33.8490], "speed_over_ground_knots": 12.0, "course_over_ground_degrees": 45 },
+    { "timestamp_ms": 1150000, "position": [151.2268, -33.8460], "speed_over_ground_knots": 12.0, "course_over_ground_degrees": 45 }
+  ]
+}

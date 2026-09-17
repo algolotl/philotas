@@ -1,0 +1,17 @@
+# Base install - service + image/video handling. These run the HTTP API.
+fastapi>=0.110
+uvicorn>=0.29
+httpx>=0.27
+pillow>=10.0
+python-multipart>=0.0.9
+numpy
+opencv-python-headless>=4.9
+pandas>=2.0
+
+# Optional detection engines - install exactly one (see README).
+# AutoGluon (Apache-2.0, supported default; heavy, brings torch):
+#     pip install autogluon.multimodal
+# autogluon.multimodal
+# ultralytics (AGPL-3.0, opt-in only via DETECT_ENGINE=ultralytics; BYO weights):
+#     pip install ultralytics
+# ultralytics>=8.2
