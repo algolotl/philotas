@@ -1,6 +1,7 @@
-# philotas-mcp
+# @philotas/mcp
 
-Model Context Protocol (MCP) server for Philotas. It exposes read-only tools
+Model Context Protocol (MCP) server for Philotas (the installable binary is
+`philotas-mcp`). It exposes read-only tools
 over a running Philotas deployment, plus developer scaffolding for authoring and
 validating data-source connectors.
 
@@ -16,10 +17,14 @@ validating data-source connectors.
 export PHILOTAS_URL=http://localhost:8788
 
 # Start the MCP server over stdio
-npx philotas-mcp
+npx -y @philotas/mcp
 
 # Verify connectivity and configuration (exit 0 means healthy)
-npx philotas-mcp doctor
+npx -y -p @philotas/mcp philotas-mcp doctor
+
+# Or install it and use the binary directly
+npm i -g @philotas/mcp
+philotas-mcp doctor
 ```
 
 Run the server from your Philotas checkout so scaffold_connector and run_tests
@@ -36,7 +41,7 @@ Add to claude_desktop_config.json:
   "mcpServers": {
     "philotas": {
       "command": "npx",
-      "args": ["-y", "philotas-mcp"],
+      "args": ["-y", "@philotas/mcp"],
       "env": { "PHILOTAS_URL": "http://localhost:8788" }
     }
   }
@@ -52,7 +57,7 @@ Add to .cursor/mcp.json:
   "mcpServers": {
     "philotas": {
       "command": "npx",
-      "args": ["-y", "philotas-mcp"],
+      "args": ["-y", "@philotas/mcp"],
       "env": { "PHILOTAS_URL": "http://localhost:8788" }
     }
   }
@@ -68,7 +73,7 @@ Add to .vscode/mcp.json:
   "servers": {
     "philotas": {
       "command": "npx",
-      "args": ["-y", "philotas-mcp"],
+      "args": ["-y", "@philotas/mcp"],
       "env": { "PHILOTAS_URL": "http://localhost:8788" }
     }
   }

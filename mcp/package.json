@@ -1,5 +1,5 @@
 {
-  "name": "philotas-mcp",
+  "name": "@philotas/mcp",
   "version": "0.1.0",
   "type": "module",
   "description": "Philotas MCP server — read-only tools over a Philotas deployment plus connector scaffolding.",

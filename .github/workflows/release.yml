@@ -47,7 +47,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Install
         run: cd mcp && npm ci
-      # First release: the philotas-mcp package must already exist on npm with
+      # First release: the @philotas/mcp package must already exist on npm with
       # trusted publishing configured for this repository — see mcp/README.md.
       - name: Publish to npm
         run: cd mcp && npm publish --provenance
@@ -129,8 +129,8 @@ jobs:
       - name: Verify npm release version
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          NPM_VER="$(npm view philotas-mcp version)"
-          echo "npm philotas-mcp = ${NPM_VER} (expected ${TAG})"
+          NPM_VER="$(npm view @philotas/mcp version)"
+          echo "npm @philotas/mcp = ${NPM_VER} (expected ${TAG})"
           if [ "${NPM_VER}" != "${TAG}" ]; then
             echo "::error::npm version mismatch" >&2
             exit 1
