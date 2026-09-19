@@ -17,3 +17,7 @@ __pycache__/
 detect/models/
 docs/internal/
 memories/
+
+# Staging directory written by scripts/public-export.mjs. Its contents are a
+# copy of this tree, so committing it would double every file.
+.public-export/
