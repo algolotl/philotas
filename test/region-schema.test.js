@@ -297,12 +297,19 @@ test('the coverage states partition the catalogue the way the recorded runs do',
 });
 
 test('no new region claims a national-integration layer', () => {
-  // Transport, vessels, berths, cameras and facilities each need a national data
+  // Transport, berths, cameras and facilities each need a national data
   // agreement. Sydney is the worked example; canberra keeps facilities and the
   // Deep Space Network because Tidbinbilla is genuinely there. Nothing built from
   // the catalogue may imply otherwise: counted 2026-08-17, a catalogue region
-  // carries 6 layers against Sydney's 12.
-  const NATIONAL = ['transport', 'vessels', 'berths', 'cameras', 'facilities', 'space'];
+  // carried 6 layers against Sydney's 12.
+  //
+  // `vessels` left this list on 2026-09-19. It was here because every vessel
+  // source the project had was a national agreement; the layer then gained a
+  // keyless worldwide AIS feed (lib/feeds/openwaters-ais.js), which makes it
+  // global in the same way `hotspots` is. What this list defends is the claim a
+  // region makes, so the layer moves out of it rather than the list being
+  // dropped.
+  const NATIONAL = ['transport', 'berths', 'cameras', 'facilities', 'space'];
   for (const candidate of CANDIDATES) {
     for (const layer of NATIONAL) {
       assert.ok(!REGIONS[candidate.id].layers.includes(layer),
@@ -351,7 +358,7 @@ test('a chokepoint opens on a wider box and a further-out camera than a port cit
   }
 });
 
-test('every strait carries no sites and no berth or vessel layer', () => {
+test('every strait carries no sites, no berths, and the global vessel layer', () => {
   const straits = Object.values(REGIONS).filter((r) => r.type === 'strait');
   assert.equal(straits.length, 9, 'the design names nine chokepoints');
   for (const strait of straits) {
@@ -359,9 +366,14 @@ test('every strait carries no sites and no berth or vessel layer', () => {
     // so this is a guard on the next edit rather than a check on current data. It
     // fires the moment somebody hangs a port on a waterway.
     assert.deepEqual(strait.sites, [], `${strait.id} has sites`);
-    for (const layer of ['berths', 'vessels']) {
-      assert.ok(!strait.layers.includes(layer), `${strait.id} claims the ${layer} layer`);
-    }
+    // berths, not vessels. A berth register is a specific port's property and no
+    // chokepoint has one — but vessels became a global layer on 2026-09-19 (a
+    // keyless worldwide AIS feed), and a strait is exactly where hulls belong.
+    // The positive assertion pins that, so deleting the layer again is a failure
+    // here rather than a silent thinning of the picture.
+    assert.ok(!strait.layers.includes('berths'), `${strait.id} claims the berths layer`);
+    assert.ok(strait.layers.includes('vessels'),
+      `${strait.id} has no vessels layer, and the global AIS feed is what puts hulls on a chokepoint`);
   }
 });
 

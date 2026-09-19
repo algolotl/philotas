@@ -13,8 +13,8 @@ run it locally, and integrate it through its MCP server. Enterprises buy a **sup
 licence** for hardened deployments, licensed data feeds and SLA-backed support (see
 [Licence](#licence)).
 
-Stack: Next.js 16 (App Router, Turbopack), the Google Maps JavaScript API
-(roadmap/dark/satellite/hybrid basemaps, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`), Node
+Stack: Next.js 16 (App Router, Turbopack), MapLibre GL (keyless CARTO basemap),
+Node
 runtime, file store or Postgres, LLM adjudication through the `lib/llm.js` provider
 adapter (an OpenAI-compatible HTTP endpoint, or the optional internal client, with a
 deterministic heuristic fallback), and object detection via a companion Python
@@ -58,9 +58,8 @@ See `mcp/README.md` for install, configuration and client setup.
 
 ## What it does
 
-- **Unified live map** — Google Maps basemaps (dark, roadmap, satellite, hybrid,
-  terrain — switch on the map itself), region switcher, deep-linkable views
-  (`?region=&basemap=satellite&lng=&lat=&zoom=`).
+- **Unified live map** — a keyless MapLibre GL globe (no Google Maps, no API key),
+  region switcher, deep-linkable views (`?region=&lng=&lat=&zoom=`).
 - **Maritime and transport convergence** — vessels alongside Transport for NSW
   ferries, trains, buses, light rail and metro, against a register of Sydney
   berths and terminals. Circular Quay is where the two domains physically meet.
@@ -138,7 +137,7 @@ reusable global sources.
 
 ```
 app/        Next.js App Router — UI + API route handlers
-components/  MapView (Google Maps), KnowledgePanel (graph + news)
+components/  MapView (MapLibre GL), KnowledgePanel (graph + news)
 ingest/      standalone AIS ingest service + deterministic detectors (own package)
 mcp/         Model Context Protocol server (read-only tools + developer scaffolding)
 detect/      Python object-detection service (FastAPI)
@@ -185,8 +184,10 @@ app runs fully without any of them.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | unset | Google Maps JavaScript API key. Without it the map shows a setup card (the rest of the app still runs). Bring your own key. |
-| `NEXT_PUBLIC_GOOGLE_MAPS_ID` | unset | Optional Google vector map id (enables dark mode and tilt). |
+| `NEXT_PUBLIC_MAP_STYLE_URL` | CARTO dark-matter style | Basemap style URL. The map is keyless MapLibre GL — no Google Maps, no API key. Point it at a self-hosted tile/style server for air-gapped deployments. |
+
+Connected deployments use the keyless CARTO/OpenStreetMap basemap by default;
+air-gapped deployments serve self-hosted offline tiles.
 
 ### Datastore
 
@@ -287,13 +288,12 @@ test commands, coding conventions and the DCO sign-off.
 ## Security
 
 Found a vulnerability? See `SECURITY.md` for the disclosure policy and supported
-versions. Note that Google Maps requires your own API key, and the ultralytics
-engine is opt-in.
+versions. Note that the ultralytics engine is opt-in.
 
 ## Licence
 
 Licensed under the **Apache License, Version 2.0** — see `LICENSE`. Copyright ©
-2026 Algolotl.
+2026 Kovacorp Pty Ltd.
 
 Support licences (SLA-backed support, enterprise add-ons, licensed data feeds,
 air-gapped deployment) are sold separately at <https://philotas.com>. The open

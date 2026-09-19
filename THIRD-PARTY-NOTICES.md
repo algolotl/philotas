@@ -91,10 +91,16 @@ Capability for EOS (LANCE, https://earthdata.nasa.gov/lance), part of NASA's
 Earth Observing System Data and Information System (EOSDIS). NASA does not
 endorse this product.
 
-Base map tiles © CARTO and © OpenStreetMap contributors. The optional Google
-Maps basemap requires your own `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`; no Google
-Maps credentials ship with this project, and Google Maps imagery is subject to
-Google's own terms.
+Base map tiles © CARTO and © OpenStreetMap contributors. MapLibre GL is
+licensed BSD-3-Clause; no Google Maps or API keys are used.
+
+Vessel positions outside New South Wales come from the Open Waters AIS network
+(aiscast, https://openwaters.io/ais/), which re-serves live AIS under each
+upstream source's own terms. The worldwide traffic shown is the AISHub
+aggregate (https://www.aishub.net). Attribution travels with the data: every
+`vessels` payload carries the credit line the licence requires, and it is
+displayed wherever those positions are shown. Coverage is a volunteer and
+aggregate network's, not a global satellite picture's — it has real holes.
 
 Review each provider's terms before relying on their data.
 

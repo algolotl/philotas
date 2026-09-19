@@ -123,10 +123,6 @@ export default function Page() {
   const [rules, setRules] = useState([]);
   const [actions, setActions] = useState([]);
   const [ruleForm, setRuleForm] = useState({ name: '', layer: '', field: '', op: 'gte', value: '' });
-  // Which Google basemap the map shows. Default is the dark-styled roadmap so
-  // the switch to Google does not also change the product's colour temperature;
-  // satellite / hybrid are one tap away on the map's own switcher.
-  const [basemap, setBasemap] = useState('dark');
   const [graphOpen, setGraphOpen] = useState(false);
   // ---- vision (object detection) ----
   const [detections, setDetections] = useState([]);
@@ -160,11 +156,10 @@ export default function Page() {
     fetch('/api/regions').then((r) => r.json()).then((d) => setRegions(d.regions || [])).catch(() => {});
   }, [authReady]);
 
-  // Deep-link: ?region=<id>&basemap=satellite&lng=&lat=&zoom= sets the initial view.
+  // Deep-link: ?region=<id>&lng=&lat=&zoom= sets the initial view.
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const r = p.get('region'); if (r) setRegion(r);
-    const bm = p.get('basemap'); if (bm) setBasemap(bm);
     if (p.get('graph') === '1') setGraphOpen(true);
     const lng = +p.get('lng'); const lat = +p.get('lat'); const z = +p.get('zoom');
     if (lng && lat) setTimeout(() => setCommand({ seq: ++seqRef.current, center: [lng, lat], zoom: z || 14, pitch: 0 }), 900);
@@ -175,7 +170,7 @@ export default function Page() {
   // city without being asked again.
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
-    const hasViewParam = p.has('region') || p.has('lng') || p.has('lat') || p.has('basemap');
+    const hasViewParam = p.has('region') || p.has('lng') || p.has('lat');
     let preferred = null;
     try { preferred = localStorage.getItem(PREFERRED_REGION_KEY); } catch { /* ignore */ }
     // A stored preference restores the returning visitor's city only when the
@@ -195,21 +190,6 @@ export default function Page() {
     setChooserOpen(false);
     setChooserSearch('');
   }
-
-  // Persist the basemap choice across visits.
-  useEffect(() => {
-    try { localStorage.setItem('philotas.basemap', basemap); } catch { /* ignore */ }
-  }, [basemap]);
-  // Restore it on first mount (deep-link ?basemap= wins: it is set by the
-  // effect above and this one only seeds the initial state).
-  useEffect(() => {
-    try {
-      const p = new URLSearchParams(window.location.search);
-      if (p.has('basemap')) return;
-      const saved = localStorage.getItem('philotas.basemap');
-      if (saved) setBasemap(saved);
-    } catch { /* ignore */ }
-  }, []);
 
   // Saved workspaces (localStorage).
   useEffect(() => {
@@ -870,7 +850,7 @@ export default function Page() {
         replay={replay} replayFrames={replayFrames}
         annotations={annotations} annotateMode={annotateMode} onAddAnnotation={onAddAnnotation}
         onCamera={(c) => { cameraRef.current = c; }} alerts={alerts}
-        detections={detections} basemap={basemap} onBasemapChange={setBasemap}
+        detections={detections}
       />
 
       {graphOpen ? (
@@ -882,6 +862,7 @@ export default function Page() {
       ) : (
         <MiniGraph
           region={region}
+          authReady={authReady}
           onExpand={() => setGraphOpen(true)}
           onPick={(n) => setCommand({ seq: ++seqRef.current, center: n.coord, zoom: region === 'world' ? 5 : 12 })}
         />
@@ -945,9 +926,15 @@ export default function Page() {
       {/* header */}
       <header id="topbar">
         <div className="brand">
-          <span className="mark">◈</span>
+          {/* The mark is the same construct the site uses: a chamfered "P" whose
+              bowl counter is cut as a wedge. Inline rather than an <img> so it
+              inherits --accent on the dark map surface. */}
+          <svg className="mark" viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
+            <path fill="currentColor" fillRule="evenodd"
+              d="M12 8 H40 L52 20 V30 L40 42 H24 V56 H12 Z M24 17 L44 25 L24 33 Z" />
+          </svg>
           <div>
-            <div className="title">BLUEBIRD PHILOTAS</div>
+            <div className="title">PHILOTAS</div>
             <div className="subtitle">Common Operating Picture — {ctx.name}</div>
           </div>
         </div>
@@ -1249,19 +1236,6 @@ export default function Page() {
         {/* ---- capabilities: what the system can do, one tap each ---- */}
         <div className="caps">
           <div className="panel-head">CAPABILITIES</div>
-
-          <div className="cap-tile">
-            <span className="cap-ico">🗺</span>
-            <div className="cap-body">
-              <div className="cap-name">Google basemaps · satellite</div>
-              <div className="cap-line">Roadmap, dark, satellite, hybrid, terrain</div>
-              <div className="cap-btns">
-                {[['dark', 'Dark'], ['roadmap', 'Map'], ['satellite', '🛰 Sat'], ['hybrid', '🛰+'], ['terrain', '⛰']].map(([id, label]) => (
-                  <button key={id} className={'cap-btn' + (basemap === id ? ' on' : '')} onClick={() => setBasemap(id)}>{label}</button>
-                ))}
-              </div>
-            </div>
-          </div>
 
           <div className="cap-tile">
             <span className="cap-ico">🔍</span>

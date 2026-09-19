@@ -47,6 +47,10 @@ const ferry = (over = {}) => ({
 const noSources = {
   stored: async () => [],
   ferries: async () => [],
+  // Stubbed for every case, not just the ones that assert on it: the global AIS
+  // source is real and would otherwise be called over the network by any test
+  // that passes a region with a bbox.
+  openWaters: async () => [],
   portMovements: async () => ({ features: [] }),
 };
 
@@ -104,7 +108,7 @@ test('a missing transport key is reported as the cause when it is the cause', as
   delete process.env.TFNSW_API_KEY;
   try {
     const fc = await fetchVessels(null, noSources);
-    assert.match(fc.notice, /Transport for NSW key not configured/i);
+    assert.match(fc.notice, /Transport for NSW key is not configured/i);
   } finally {
     if (previous !== undefined) process.env.TFNSW_API_KEY = previous;
   }
@@ -175,6 +179,24 @@ test('a bbox filter excludes vessels outside it', async () => {
   });
   assert.equal(fc.features.length, 1);
   assert.equal(fc.features[0].properties.title, 'IN HARBOUR');
+});
+
+test('a source whose vessels are all outside the bbox is not named', async () => {
+  // Every source answers every region: the NSW ferries come back for a Gulf
+  // region too, and are then discarded by the bbox filter. Naming them anyway
+  // put "tfnsw" on a region where no ferry is ever drawn.
+  const region = { bbox: { west: 55.0, east: 57.5, south: 25.5, north: 27.6 } };
+  const fc = await fetchVessels(region, {
+    ...noSources,
+    ferries: async () => [ferry({ position: [151.24, -33.85] })],
+    openWaters: async () => [{
+      mmsi: 999, name: 'GULF SHIP', ship_type: 'tanker',
+      position: [56.2, 26.6], last_report_ms: Date.now(), feed_source: 'aishub',
+    }],
+  });
+  assert.equal(fc.features.length, 1);
+  assert.equal(fc.features[0].properties.title, 'GULF SHIP');
+  assert.equal(fc.source, 'aishub');
 });
 
 test('one failing source does not cost the others', async () => {

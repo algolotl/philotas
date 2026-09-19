@@ -4,6 +4,7 @@ node_modules/
 .DS_Store
 *.log
 .data/
+.brand-build/
 .idea/
 detect/models/
 detect/.venv/

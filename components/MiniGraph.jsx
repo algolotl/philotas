@@ -36,16 +36,21 @@ function layout(nodes, edges) {
   return pos;
 }
 
-export default function MiniGraph({ region, onExpand, onPick }) {
+export default function MiniGraph({ region, onExpand, onPick, authReady }) {
   const [graph, setGraph] = useState({ nodes: [], edges: [] });
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    const pull = () => getJson(`/api/graph?region=${region}`).then(setGraph).catch(() => {});
+    if (!authReady) return;
+    // Clear the previous region's graph up front: a failed or slow fetch must
+    // not leave Sydney's entities sitting under a region that has since moved
+    // (the map re-aims immediately, the graph used to lag a whole poll behind).
+    setGraph({ nodes: [], edges: [] });
+    const pull = () => getJson(`/api/graph?region=${region}`).then(setGraph).catch(() => setGraph({ nodes: [], edges: [] }));
     pull();
     const t = setInterval(pull, 20_000);
     return () => clearInterval(t);
-  }, [region]);
+  }, [region, authReady]);
 
   // Defence in depth. getJson already keeps a bad response out of state; this
   // makes a malformed one non-fatal rather than a render-time crash.

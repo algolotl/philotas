@@ -112,7 +112,7 @@ The full environment reference is in `README.md` and `.env.example`.
 
 ```
 app/        Next.js App Router — UI + API route handlers
-components/  MapView (Google Maps), KnowledgePanel (graph + news)
+components/  MapView (MapLibre GL), KnowledgePanel (graph + news)
 ingest/      standalone AIS ingest service + deterministic detectors (own package)
 mcp/         Model Context Protocol server (read-only tools + developer scaffolding)
 detect/      Python object-detection service (FastAPI)

@@ -4,7 +4,7 @@
   "private": true,
   "description": "Philotas — a real-time geospatial common operating picture with an AI-driven ontology.",
   "license": "Apache-2.0",
-  "author": "Algolotl",
+  "author": "Kovacorp Pty Ltd",
   "type": "module",
   "scripts": {
     "dev": "next dev -p 8788",
@@ -17,6 +17,7 @@
   "dependencies": {
     "fast-xml-parser": "^4.4.1",
     "gtfs-realtime-bindings": "^1.1.1",
+    "maplibre-gl": "^5.24.0",
     "next": "^16.0.0",
     "pg": "^8.13.1",
     "react": "^19.0.0",

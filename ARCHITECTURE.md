@@ -1,8 +1,8 @@
 # Philotas — architecture & file map
 
 A live, multi-source geospatial common operating picture. Next.js (App Router)
-+ the Google Maps JavaScript API on the front (roadmap/dark/satellite/hybrid
-basemaps), a connector/feed layer pulling live sources, an AI-built ontology
++ MapLibre GL on the front (keyless CARTO/OpenStreetMap basemap), a connector/
+feed layer pulling live sources, an AI-built ontology
 that resolves entities and links across those sources, an object-detection
 pipeline (VISION panel + Python service) with detection workflows that raise
 alerts, and a backend with auth, workspaces, rules/alerts, actions and an
@@ -88,7 +88,7 @@ deterministic heuristic fallback.
 
 | File | Purpose |
 |---|---|
-| `components/MapView.jsx` | Google Maps JS API map; renders all layers as Data layers + markers, handles camera moves and the Dark/Map/Satellite/Hybrid/Terrain basemap switcher. |
+| `components/MapView.jsx` | MapLibre GL map; renders all layers as GeoJSON sources + markers, handles camera moves on a 3D globe. |
 | `components/KnowledgePanel.jsx` | Full-screen searchable news list + force-directed entity graph. |
 | `components/MiniGraph.jsx` | Always-on mini knowledge graph pinned to the map corner. |
 

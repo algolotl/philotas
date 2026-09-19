@@ -25,7 +25,7 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
 }
 #topbar > * { pointer-events: auto; }
 .brand { display: flex; align-items: center; gap: 10px; }
-.brand .mark { color: var(--accent); font-size: 22px; }
+.brand .mark { color: var(--accent); flex: none; display: block; }
 .brand .title { font-weight: 700; letter-spacing: 2px; font-size: 14px; }
 .brand .subtitle { color: var(--muted); font-size: 11px; letter-spacing: 0.5px; }
 .health { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
@@ -222,56 +222,17 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
 }
 #replaybar .btn.live { border-color: var(--ok); color: var(--ok); background: rgba(52,211,153,0.12); }
 
-/* Google Maps info windows, restyled to the app's dark panel surface.
-   InfoWindow DOM is injected by the Google script, so these selectors reach
-   through .gm-style-iw — they must stay specificity-matched or Google's own
-   styles win. */
-.gm-style-iw, .gm-style-iw-c, .gm-style-iw-d {
+/* MapLibre popups, restyled to the app's dark panel surface. */
+.maplibregl-popup-content {
   background: var(--panel-solid); color: var(--text);
   border-radius: 8px; font-size: 12px; padding: 12px;
   border: 1px solid var(--line);
 }
-.gm-style-iw-d { overflow: hidden !important; }
-.gm-style-iw-tc::after, .gm-style-iw-t::after { background: var(--panel-solid); }
-.gm-ui-hover-effect { filter: invert(0.7); }
-.gm-pop h4 { margin: 0 0 6px; font-size: 12px; }
+.maplibregl-popup-close-button { color: var(--muted); }
+.maplibregl-popup-content h4 { margin: 0 0 6px; font-size: 12px; }
 .pop-row { display: flex; justify-content: space-between; gap: 12px; }
 .pop-row .k { color: var(--muted); }
-.gm-ann-label { background: rgba(26,18,5,0.55); padding: 1px 4px; border-radius: 3px; }
-.gm-site-label { background: rgba(10,14,20,0.5); padding: 0 3px; border-radius: 3px; }
 
-/* basemap switcher — sits inside the map, bottom-left, clear of the replay bar */
-.map-wrap { position: absolute; inset: 0; }
-.basemap-switch {
-  position: absolute; left: 12px; bottom: 46px; z-index: 6;
-  display: flex; gap: 3px; padding: 3px;
-  background: var(--panel-solid); border: 1px solid var(--line); border-radius: 7px;
-}
-.basemap-btn {
-  font: 10px var(--mono); color: var(--muted); cursor: pointer;
-  background: transparent; border: 1px solid transparent; border-radius: 5px; padding: 5px 8px;
-}
-.basemap-btn:hover { color: var(--text); background: rgba(56,189,248,0.08); }
-.basemap-btn.on { color: var(--accent); border-color: var(--accent); background: rgba(56,189,248,0.14); }
-.gmap-hint {
-  position: absolute; right: 12px; bottom: 46px; z-index: 6;
-  font: 9px var(--mono); letter-spacing: 1px; color: #4e7ba0;
-  background: rgba(13,18,26,0.7); border: 1px solid var(--line); border-radius: 5px; padding: 3px 7px;
-  pointer-events: none;
-}
-.gmap-hint.light { color: #33455e; background: rgba(255,255,255,0.75); }
-.map-error {
-  position: absolute; inset: 0; z-index: 8; display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at 50% 40%, #101a29 0%, #0a0e14 70%);
-}
-.map-error-card {
-  max-width: 460px; margin: 20px; padding: 22px 26px;
-  background: var(--panel-solid); border: 1px solid var(--warn); border-radius: 10px;
-  font-size: 12px; color: var(--text);
-}
-.map-error-title { color: var(--warn); font: 12px var(--mono); letter-spacing: 2px; margin-bottom: 10px; }
-.map-error p { margin: 8px 0; color: var(--muted); }
-.map-error code { color: var(--accent); font: 11px var(--mono); }
 
 /* ontology panel */
 .ont-badge {
@@ -385,12 +346,12 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
 /* Replay is a feature someone deliberately turned on, not a fault. Amber says
    "something is wrong with your data" — the wrong thing to tell a trial visitor
    who has just asked to look at yesterday. Same position and shape so it reads
-   as the same class of status line, in the Bluebird cyan rather than a warning
+   as the same class of status line, in the brand cyan rather than a warning
    colour. */
 .data-notice.replaying {
-  background: rgba(126, 249, 255, 0.10);
-  border-color: rgba(126, 249, 255, 0.45);
-  color: #7EF9FF;
+  background: rgba(56, 189, 248, 0.10);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: var(--accent);
 }
 
 /* Answering from the archive while the poller catches up. Same reasoning as
@@ -404,7 +365,7 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   color: #CBD5E1;
 }
 
-/* Read-only trial marker. Bluebird royal rather than amber: this is a normal
+/* Read-only trial marker. Brand blue rather than amber: this is a normal
    state for a public demonstrator, not a degraded one. */
 .trial-badge {
   position: absolute;
@@ -413,8 +374,8 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   z-index: 41;
   padding: 5px 12px;
   border-radius: 4px;
-  background: rgba(93, 79, 255, 0.16);
-  border: 1px solid rgba(93, 79, 255, 0.6);
+  background: rgba(56, 189, 248, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.6);
   color: #8B81FF;
   font-size: 10.5px;
   letter-spacing: 0.09em;
@@ -436,8 +397,8 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
 }
 #casefiles .panel-head { display: flex; align-items: center; gap: 8px; }
 .cf-count {
-  background: rgba(93, 79, 255, 0.25);
-  border: 1px solid rgba(93, 79, 255, 0.6);
+  background: rgba(56, 189, 248, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.6);
   color: #8B81FF;
   border-radius: 8px; padding: 0 6px; font-size: 9px;
 }
@@ -452,8 +413,8 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   border-left: 2px solid transparent; padding: 8px 10px; cursor: pointer;
   font: inherit; color: inherit; display: block; width: 100%;
 }
-.cf-item:hover { background: rgba(16, 39, 74, 0.9); border-left-color: #5D4FFF; }
-.cf-item.on { background: rgba(93, 79, 255, 0.16); border-left-color: #7EF9FF; }
+.cf-item:hover { background: rgba(16, 39, 74, 0.9); border-left-color: var(--accent); }
+.cf-item.on { background: rgba(56, 189, 248, 0.16); border-left-color: var(--accent); }
 .cf-title { font-size: 11px; color: #E8F0FA; text-transform: capitalize; }
 .cf-when { font-size: 9px; color: #7E93AD; margin-top: 1px; }
 .cf-noframes { color: #D97706; }
@@ -464,7 +425,7 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   font-size: 8px; letter-spacing: 0.09em; text-transform: uppercase;
   padding: 1px 5px; border-radius: 2px; flex: none;
 }
-.cf-method.llm { background: rgba(93, 79, 255, 0.22); color: #8B81FF; }
+.cf-method.llm { background: rgba(56, 189, 248, 0.22); color: #8B81FF; }
 .cf-method.heuristic { background: rgba(126, 147, 173, 0.18); color: #7E93AD; }
 .cf-evidence { font-size: 8.5px; color: #7E93AD; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -480,7 +441,7 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   color: #7E93AD; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
 }
 .intel-doc { display: block; padding: 5px 0; border-bottom: 1px solid rgba(232,240,250,0.05); text-decoration: none; }
-.intel-doc:hover .intel-doc-title { color: #7EF9FF; }
+.intel-doc:hover .intel-doc-title { color: var(--accent); }
 .intel-doc-title { display: block; font-size: 10.5px; color: #B0C2D9; line-height: 1.4; }
 .intel-doc-src { display: block; font-size: 8.5px; color: #7E93AD; margin-top: 2px; }
 .intel-conn { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; font-size: 10px; color: #B0C2D9; }
@@ -594,7 +555,7 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   #topbar .region-select { order: 1; max-width: 38vw; }
   #topbar .mobile-feed-pill { order: 2; }
   #topbar .alert-badge { order: 3; display: inline-flex; align-items: center; padding: 0 7px; }
-  .brand .mark { font-size: 18px; }
+  .brand .mark { width: 18px; height: 18px; }
   /* Mark only. The wordmark and the subtitle are 98px of a 390px bar that the
      region select, the feed pill and the alert badge need to stay on screen
      without scrolling; the region select already names the region, and the
@@ -783,18 +744,12 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
      attribution occupies the bottom-right corner. */
   #replaybar:has(> .btn:only-child) { right: auto; }
 
-  /* Google Maps keeps its attribution and logo at the container's bottom
-     edge, which on a phone sits under the tab bar and the status bar.
-     Attribution is a licence condition, so it moves up rather than being
-     covered. The default UI is disabled (disableDefaultUI) — pinch and
-     double-tap zoom the map — so there are no zoom buttons to reposition. */
-  .gm-style-cc, .gm-style .gm-style-cc,
-  .map-root a[href*="maps.google.com"], .map-root a[href*="google.com/maps"] {
+  /* MapLibre keeps its attribution at the container's bottom edge, which on a
+     phone sits under the tab bar and the status bar. Attribution is a licence
+     condition, so it moves up rather than being covered. */
+  .maplibregl-ctrl-attrib {
     transform: translateY(calc(-1 * var(--bottom-chrome) + 6px));
   }
-  .gm-ui-hover-effect { width: 44px !important; height: 44px !important; }
-  .basemap-switch { left: calc(6px + var(--safe-left)); bottom: calc(var(--bottom-chrome) + 8px); }
-  .gmap-hint { display: none; }
 
   /* ---- footer ---------------------------------------------------------- */
   #statusbar {
@@ -881,9 +836,9 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
   display: block; width: 100%; text-align: left; background: none; border: 0;
   padding: 4px 0; cursor: pointer; font-size: 13px; color: #0f1e33;
 }
-.chooser-item:hover { color: #5d4fff; }
+.chooser-item:hover { color: var(--accent); }
 .chooser-enter {
-  margin-top: 14px; background: #5d4fff; color: #fff; border: 0;
+  margin-top: 14px; background: var(--accent); color: #fff; border: 0;
   padding: 9px 16px; border-radius: 6px; font-size: 14px; cursor: pointer;
 }
 @media (max-width: 640px) {
@@ -1002,6 +957,6 @@ html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
 .alert-wf { color: var(--warn); flex: none; font-size: 11px; }
 .demo-tag {
   font: 8px var(--mono); letter-spacing: 0.5px; flex: none;
-  color: #7EF9FF; border: 1px solid rgba(126,249,255,0.45); border-radius: 3px; padding: 0 4px;
-  background: rgba(126,249,255,0.07);
+  color: var(--accent); border: 1px solid rgba(56,189,248,0.45); border-radius: 3px; padding: 0 4px;
+  background: rgba(56, 189, 248,0.07);
 }

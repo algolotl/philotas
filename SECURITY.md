@@ -28,8 +28,8 @@ preceding release.
 
 ## Notes for operators
 
-- **Google Maps** is optional and needs **your own** `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
-  (Maps JavaScript API, with your domain allowed). No key ships with the project.
+- The **basemap** is keyless **MapLibre GL** + CARTO/OpenStreetMap. No API key is
+  required; self-host tiles for air-gapped deployments.
 - **ultralytics** (YOLO) is an explicit **opt-in** detection engine (`DETECT_ENGINE=ultralytics`,
   AGPL-3.0). It is not loaded unless you select it; the default is a trained
   AutoGluon model via `AG_MODEL_DIR`.
