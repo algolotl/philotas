@@ -23,6 +23,13 @@ import {
   upsertEntityProfiles,
   PROFILE_BATCH_SIZE,
 } from '../lib/ontology/profiles.js';
+// The HTTP provider, named explicitly. Without this the adapter falls through to
+// the optional @axoquant/llm package, which is private and is NOT part of this
+// tree — so the file only passed on a checkout that happened to have it
+// installed, and it was exercising that package rather than the adapter.
+// `bge_8005` is the service identity the adapter composes from the host; every
+// stub in this file routes by path suffix, so no port is involved and nothing binds.
+process.env.PHILOTAS_LLM_URL = 'http://bge_8005';
 
 // lib/ontology/build.js reaches sample-lake JSON through the modules it pulls
 // in, without an import attribute. Same loader shim as test/ontology-route.test.js

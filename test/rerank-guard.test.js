@@ -77,6 +77,13 @@ after(() => {
 });
 
 const { rerank, RerankMalformed } = await import('../lib/rerank.js');
+// The HTTP provider, named explicitly. Without this the adapter falls through to
+// the optional @axoquant/llm package, which is private and is NOT part of this
+// tree — so the file only passed on a checkout that happened to have it
+// installed, and it was exercising that package rather than the adapter.
+// `bge_8005` is the service identity the adapter composes from the host; every
+// stub in this file routes by path suffix, so no port is involved and nothing binds.
+process.env.PHILOTAS_LLM_URL = 'http://bge_8005';
 
 /** Run `fn` with the client returning `scores` instead of calling the service. */
 const withClientScores = async (scores, fn) => {

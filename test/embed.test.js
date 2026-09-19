@@ -5,6 +5,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { embed, countTokens, EmbedUnavailable, EmbedMalformed, EMBED_DIM, _resetModelProbe } from '../lib/embed.js';
 
+// The HTTP provider, named explicitly. Without this the adapter falls through to
+// the optional @axoquant/llm package, which is private and is NOT part of this
+// tree — so the file only passed on a checkout that happened to have it
+// installed, and it was exercising that package rather than the adapter.
+//
+// The host is the service identity the embed_model assertions below expect. The
+// adapter composes that identity from the host, and every stub in this file
+// routes by path suffix, so no port is involved and nothing binds.
+process.env.PHILOTAS_LLM_URL = 'http://bge_8005';
+
 const vec = (n) => Array.from({ length: EMBED_DIM }, () => n);
 
 // What the embedder's /v1/models actually answered, probed 2026-08-17. One entry,
