@@ -1,0 +1,452 @@
+[
+  {
+    "id": "cq-2",
+    "name": "Circular Quay Wharf 2",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.2105,
+    "lat": -33.8613,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "cq-3",
+    "name": "Circular Quay Wharf 3",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.211,
+    "lat": -33.8611,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "cq-4",
+    "name": "Circular Quay Wharf 4",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.2115,
+    "lat": -33.8609,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "cq-5",
+    "name": "Circular Quay Wharf 5",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.212,
+    "lat": -33.8607,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "opt",
+    "name": "Overseas Passenger Terminal",
+    "berth_type": "cruise",
+    "operator": "Port Authority of NSW",
+    "lon": 151.2085,
+    "lat": -33.8587,
+    "radius_metres": 250,
+    "max_loa_metres": 350
+  },
+  {
+    "id": "white-bay",
+    "name": "White Bay Cruise Terminal",
+    "berth_type": "cruise",
+    "operator": "Port Authority of NSW",
+    "lon": 151.1817,
+    "lat": -33.8636,
+    "radius_metres": 250,
+    "max_loa_metres": 320
+  },
+  {
+    "id": "glebe-island",
+    "name": "Glebe Island Berth 1-2",
+    "berth_type": "bulk",
+    "operator": "Port Authority of NSW",
+    "lon": 151.178,
+    "lat": -33.869,
+    "radius_metres": 220,
+    "max_loa_metres": 220
+  },
+  {
+    "id": "barangaroo",
+    "name": "Barangaroo Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.201,
+    "lat": -33.862,
+    "radius_metres": 130,
+    "max_loa_metres": 45
+  },
+  {
+    "id": "king-street",
+    "name": "King Street Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.201,
+    "lat": -33.869,
+    "radius_metres": 130,
+    "max_loa_metres": 45
+  },
+  {
+    "id": "garden-island",
+    "name": "Garden Island (Fleet Base East)",
+    "berth_type": "naval",
+    "operator": "Royal Australian Navy",
+    "lon": 151.231,
+    "lat": -33.866,
+    "radius_metres": 300,
+    "max_loa_metres": 270
+  },
+  {
+    "id": "pb-patrick",
+    "name": "Port Botany — Patrick Terminal",
+    "berth_type": "container",
+    "operator": "Patrick Terminals",
+    "lon": 151.226,
+    "lat": -33.974,
+    "radius_metres": 350,
+    "max_loa_metres": 350
+  },
+  {
+    "id": "pb-dpworld",
+    "name": "Port Botany — DP World Terminal",
+    "berth_type": "container",
+    "operator": "DP World",
+    "lon": 151.232,
+    "lat": -33.971,
+    "radius_metres": 350,
+    "max_loa_metres": 350
+  },
+  {
+    "id": "pb-hutchison",
+    "name": "Port Botany — Hutchison Terminal",
+    "berth_type": "container",
+    "operator": "Hutchison Ports",
+    "lon": 151.237,
+    "lat": -33.968,
+    "radius_metres": 300,
+    "max_loa_metres": 300
+  },
+  {
+    "id": "manly",
+    "name": "Manly Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.2848,
+    "lat": -33.7998,
+    "radius_metres": 150,
+    "max_loa_metres": 70
+  },
+  {
+    "id": "taronga",
+    "name": "Taronga Zoo Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.241,
+    "lat": -33.843,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "milsons-point",
+    "name": "Milsons Point Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.211,
+    "lat": -33.848,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "kirribilli",
+    "name": "Kirribilli Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.216,
+    "lat": -33.848,
+    "radius_metres": 110,
+    "max_loa_metres": 35
+  },
+  {
+    "id": "neutral-bay",
+    "name": "Neutral Bay Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.22,
+    "lat": -33.839,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "mosman-bay",
+    "name": "Mosman Bay Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.241,
+    "lat": -33.84,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "double-bay",
+    "name": "Double Bay Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.244,
+    "lat": -33.877,
+    "radius_metres": 110,
+    "max_loa_metres": 35
+  },
+  {
+    "id": "rose-bay",
+    "name": "Rose Bay Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.268,
+    "lat": -33.871,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "watsons-bay",
+    "name": "Watsons Bay Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.281,
+    "lat": -33.842,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "balmain-east",
+    "name": "Balmain East Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.188,
+    "lat": -33.856,
+    "radius_metres": 110,
+    "max_loa_metres": 35
+  },
+  {
+    "id": "pyrmont-bay",
+    "name": "Pyrmont Bay Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.195,
+    "lat": -33.869,
+    "radius_metres": 120,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "cockatoo-island",
+    "name": "Cockatoo Island Wharf",
+    "berth_type": "ferry",
+    "operator": "Transport for NSW",
+    "lon": 151.171,
+    "lat": -33.849,
+    "radius_metres": 130,
+    "max_loa_metres": 40
+  },
+  {
+    "id": "sydney-anchorage",
+    "name": "Sydney Outer Anchorage",
+    "berth_type": "anchorage",
+    "operator": "Port Authority of NSW",
+    "lon": 151.32,
+    "lat": -33.85,
+    "radius_metres": 2000,
+    "max_loa_metres": null
+  },
+  {
+    "id": "brotherson-dock-6",
+    "name": "Brotherson Dock 6 (BD6)",
+    "berth_type": "container",
+    "operator": "Patrick Terminals",
+    "lon": 151.20596,
+    "lat": -33.97058,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "brotherson-dock-7",
+    "name": "Brotherson Dock 7 (BD7)",
+    "berth_type": "container",
+    "operator": "Patrick Terminals",
+    "lon": 151.21003,
+    "lat": -33.96958,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "brotherson-dock-8",
+    "name": "Brotherson Dock 8 (BD8)",
+    "berth_type": "container",
+    "operator": "Patrick Terminals",
+    "lon": 151.21344,
+    "lat": -33.96875,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "brotherson-dock-9",
+    "name": "Brotherson Dock 9 (BD9)",
+    "berth_type": "container",
+    "operator": "Patrick Terminals",
+    "lon": 151.21669,
+    "lat": -33.96796,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "brotherson-dock-10",
+    "name": "Brotherson Dock 10 (BD10)",
+    "berth_type": "container",
+    "operator": "DP World",
+    "lon": 151.21931,
+    "lat": -33.96928,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "brotherson-dock-11",
+    "name": "Brotherson Dock 11 (BD11)",
+    "berth_type": "container",
+    "operator": "DP World",
+    "lon": 151.21625,
+    "lat": -33.97025,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "brotherson-dock-12",
+    "name": "Brotherson Dock 12 (BD12)",
+    "berth_type": "container",
+    "operator": "DP World",
+    "lon": 151.21301,
+    "lat": -33.97129,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "hayes-dock-1",
+    "name": "Hayes Dock 1 (HD1)",
+    "berth_type": "container",
+    "operator": "Hutchison Ports Sydney (SICTL)",
+    "lon": 151.19921,
+    "lat": -33.96133,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "hayes-dock-2",
+    "name": "Hayes Dock 2 (HD2)",
+    "berth_type": "container",
+    "operator": "Hutchison Ports Sydney (SICTL)",
+    "lon": 151.19999,
+    "lat": -33.96431,
+    "radius_metres": 160,
+    "max_loa_metres": null
+  },
+  {
+    "id": "bulk-liquids-berth-1",
+    "name": "Bulk Liquids Berth 1 (BLB1)",
+    "berth_type": "tanker",
+    "operator": "NSW Ports",
+    "lon": 151.21057,
+    "lat": -33.97354,
+    "radius_metres": 150,
+    "max_loa_metres": null
+  },
+  {
+    "id": "bulk-liquids-berth-2",
+    "name": "Bulk Liquids Berth 2 (BLB2)",
+    "berth_type": "tanker",
+    "operator": "NSW Ports",
+    "lon": 151.20996,
+    "lat": -33.97666,
+    "radius_metres": 150,
+    "max_loa_metres": null
+  },
+  {
+    "id": "kurnell-1",
+    "name": "Kurnell 1 (KUR1)",
+    "berth_type": "tanker",
+    "operator": "Ampol",
+    "lon": 151.21028,
+    "lat": -34.00008,
+    "radius_metres": 150,
+    "max_loa_metres": null
+  },
+  {
+    "id": "kurnell-2",
+    "name": "Kurnell 2 (KUR2)",
+    "berth_type": "tanker",
+    "operator": "Ampol",
+    "lon": 151.20953,
+    "lat": -33.9998,
+    "radius_metres": 150,
+    "max_loa_metres": null
+  },
+  {
+    "id": "glebe-island-1",
+    "name": "Glebe Island 1 (GLB1)",
+    "berth_type": "bulk",
+    "operator": "Port Authority of NSW",
+    "lon": 151.18636,
+    "lat": -33.86683,
+    "radius_metres": 130,
+    "max_loa_metres": null
+  },
+  {
+    "id": "glebe-island-2",
+    "name": "Glebe Island 2 (GLB2)",
+    "berth_type": "bulk",
+    "operator": "Port Authority of NSW",
+    "lon": 151.18736,
+    "lat": -33.86495,
+    "radius_metres": 130,
+    "max_loa_metres": null
+  },
+  {
+    "id": "glebe-island-7",
+    "name": "Glebe Island 7 (GLB7)",
+    "berth_type": "bulk",
+    "operator": "Gypsum Resources Australia / Sugar Australia",
+    "lon": 151.18193,
+    "lat": -33.86538,
+    "radius_metres": 130,
+    "max_loa_metres": null
+  },
+  {
+    "id": "glebe-island-8",
+    "name": "Glebe Island 8 (GLB8)",
+    "berth_type": "bulk",
+    "operator": "Cement Australia",
+    "lon": 151.18015,
+    "lat": -33.8662,
+    "radius_metres": 130,
+    "max_loa_metres": null
+  },
+  {
+    "id": "gore-cove-1",
+    "name": "Gore Cove 1 (GOR1)",
+    "berth_type": "tanker",
+    "operator": "Viva Energy",
+    "lon": 151.18731,
+    "lat": -33.84178,
+    "radius_metres": 150,
+    "max_loa_metres": null
+  },
+  {
+    "id": "gore-cove-2",
+    "name": "Gore Cove 2 (GOR2)",
+    "berth_type": "tanker",
+    "operator": "Viva Energy",
+    "lon": 151.18582,
+    "lat": -33.83956,
+    "radius_metres": 150,
+    "max_loa_metres": null
+  }
+]

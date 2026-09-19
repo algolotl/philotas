@@ -72,19 +72,25 @@ const EXCLUDE_GLOBS = [
   /^test\/fixtures\/portauthority-.*\.html$/,
 ];
 
-// Spec section 3 H4: the Port Authority feed is permissioned, and the berth
-// register is derived from it, so both move to philotas-enterprise with
-// synthetic fixtures taking their place.
+// Spec section 3 H4: the Port Authority feed is permissioned, so it moves to
+// philotas-enterprise.
 //
-// The module's own test goes with it, and that is not optional: the test does
-// an unconditional `await import('../lib/feeds/portauthority.js')` in its
-// before() hook, so leaving it behind is a public test suite that cannot pass.
-// Its fixtures are hand-written and already synthetic (`synthetic test
-// fixture` in the title), so they are safe — they are excluded only because
-// nothing in this tree uses them once the test is gone.
+// Its test goes with it, and that is not optional: the test does an
+// unconditional `await import('../lib/feeds/portauthority.js')` in its before()
+// hook, so leaving it behind is a public test suite that cannot pass. Its
+// fixtures are hand-written and already synthetic (`synthetic test fixture` in
+// the title), so they are safe — they are excluded only because nothing in this
+// tree uses them once the test is gone.
+//
+// `lib/data/sample-lake/berths.json` is NOT excluded, and H4's "if derived from
+// the permissioned feed" is the reason: it is not. lib/connectors/sources/
+// berths.js calls it "a bundled sample table" and describes swapping it for a
+// real client against the port authority's register in production. Excluding it
+// breaks the import chain through the connector registry — measured, 154 tests
+// across a dozen files failed with ERR_MODULE_NOT_FOUND before this line was
+// corrected.
 const EXCLUDE_PERMISSIONED = [
   'lib/feeds/portauthority.js',
-  'lib/data/sample-lake/berths.json',
   'test/portauthority.test.js',
 ];
 
