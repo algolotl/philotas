@@ -4,7 +4,7 @@
 // There is no caseIds parameter and there will not be one. Scope comes from
 // lib/corpus/scope.js, which reads the session and never the URL: a caller able
 // to name its own cases could read every case on the deployment, and the result
-// would look exactly like a working search rather than like a breach. Parallax
+// would look exactly like a working search rather than like a breach. Philotas
 // ships as a per-client install with teams and workspaces inside one instance,
 // so this predicate is the only thing between two of them.
 //

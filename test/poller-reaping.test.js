@@ -45,7 +45,7 @@ register(`data:text/javascript,${encodeURIComponent(jsonImportShim)}`, import.me
 //
 // Same isolation as test/frames.test.js and test/cache-archive-fallback.test.js.
 const cwd = process.cwd();
-const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-poller-'));
+const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-poller-'));
 
 let cache;
 let frames;
@@ -53,8 +53,8 @@ let previousWarm;
 let previousDatabaseUrl;
 
 before(async () => {
-  previousWarm = process.env.PARALLAX_WARM_REGIONS;
-  process.env.PARALLAX_WARM_REGIONS = 'sydney,london';
+  previousWarm = process.env.PHILOTAS_WARM_REGIONS;
+  process.env.PHILOTAS_WARM_REGIONS = 'sydney,london';
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   // Set to a deliberately unusable value first, then deleted. The point is
@@ -64,7 +64,7 @@ before(async () => {
   // Postgres backend at import time and puts stub frames into the live table.
   // Nothing dials this string; makePostgresFrameBackend() connects lazily, and
   // the assertion below fires before any query is issued.
-  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
   delete process.env.DATABASE_URL;
 
   process.chdir(scratch);
@@ -74,8 +74,8 @@ before(async () => {
 });
 
 after(() => {
-  if (previousWarm === undefined) delete process.env.PARALLAX_WARM_REGIONS;
-  else process.env.PARALLAX_WARM_REGIONS = previousWarm;
+  if (previousWarm === undefined) delete process.env.PHILOTAS_WARM_REGIONS;
+  else process.env.PHILOTAS_WARM_REGIONS = previousWarm;
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
   process.chdir(cwd);

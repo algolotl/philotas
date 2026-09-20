@@ -16,7 +16,7 @@ Asked to type the entity `COLLAROY`, three models disagreed:
 | Qwen2.5-Coder-7B, loose prompt | `Organization` |
 | Qwen3-Next-80B | `Vessel` |
 
-None of them knew. All three inferred a type from sentence context. Parallax
+None of them knew. All three inferred a type from sentence context. Philotas
 already held the answer: COLLAROY is in the live Transport for NSW feed with a
 type, an operator and a berth history.
 

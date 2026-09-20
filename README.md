@@ -246,10 +246,10 @@ air-gapped deployments serve self-hosted offline tiles.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `PARALLAX_TRIAL` | unset | Set `1` to enable a read-only viewer session at `POST /api/auth/guest` for a public demonstrator. |
+| `PHILOTAS_TRIAL` | unset | Set `1` to enable a read-only viewer session at `POST /api/auth/guest` for a public demonstrator. |
 | `ALLOW_INSECURE_COOKIE` | unset | Set `1` to allow the session cookie without the `Secure` flag. **Default off** — only enable for local HTTP development, never behind HTTPS or in production. |
-| `PARALLAX_OPEN_READ` | unset | Set `1` to drop the read gate (read routes become unauthenticated). |
-| `PARALLAX_WARM_REGIONS` | `sydney` | Comma-separated regions pre-polled at boot. |
+| `PHILOTAS_OPEN_READ` | unset | Set `1` to drop the read gate (read routes become unauthenticated). |
+| `PHILOTAS_WARM_REGIONS` | `sydney` | Comma-separated regions pre-polled at boot. |
 
 ### Ingest service (`ingest/`, separate package)
 
@@ -273,7 +273,7 @@ re-run the seed to refresh the example.
 
 ## Trial access
 
-`PARALLAX_TRIAL=1` enables a viewer-role session at `POST /api/auth/guest` for a
+`PHILOTAS_TRIAL=1` enables a viewer-role session at `POST /api/auth/guest` for a
 public demonstrator. Read-only: no write-back, no rule changes, no administration.
 Leave it unset for a private deployment.
 

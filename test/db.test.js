@@ -14,7 +14,7 @@ import path from 'node:path';
 // lib/db.js picks its backend and resolves the file path from
 // process.cwd() the moment it is imported (DATABASE_URL unset -> fileBackend,
 // DIR = path.join(process.cwd(), '.data')). To avoid writing into the
-// developer's real .data/parallax-db.json, we chdir into a throwaway
+// developer's real .data/philotas-db.json, we chdir into a throwaway
 // directory *before* the dynamic import below runs — a static top-level
 // import would be hoisted ahead of the chdir and defeat this. Each test file
 // under `node --test` runs in its own child process (confirmed empirically:
@@ -51,14 +51,14 @@ let unclassPrivateNamed;   // classification 0, visibility 'private', sharedWith
 // from "seed fixtures" into separate hooks races the import against the seed.
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-db-test-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-db-test-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   // Set to a deliberately unusable value first, then deleted, so the delete is
   // proven on a developer box too rather than being a line that only matters
   // where nobody looks. Nothing dials it — lib/db.js's pgBackend connects
   // lazily and the assertion below fires first.
-  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
   delete process.env.DATABASE_URL;
 
   process.chdir(tempDir);
@@ -91,8 +91,8 @@ test('the fixtures were written to the throwaway datastore, not to a real one', 
   // lib/db.js exports no backend name, so the backend is identified by where
   // the three fixtures above landed. A surviving DATABASE_URL means no file
   // here and three classified workspaces in a live database instead; a lost
-  // chdir means they are in the developer's own .data/parallax-db.json.
-  const scratchDatastore = path.join(tempDir, '.data', 'parallax-db.json');
+  // chdir means they are in the developer's own .data/philotas-db.json.
+  const scratchDatastore = path.join(tempDir, '.data', 'philotas-db.json');
   assert.ok(
     fs.existsSync(scratchDatastore),
     'the file backend must be the one that took the fixtures, and it must be rooted in the temp dir'
@@ -101,7 +101,7 @@ test('the fixtures were written to the throwaway datastore, not to a real one', 
 
   // And the developer's own datastore, which does exist on a box that has ever
   // run the app, is untouched by name.
-  const realDatastore = path.join(originalCwd, '.data', 'parallax-db.json');
+  const realDatastore = path.join(originalCwd, '.data', 'philotas-db.json');
   if (fs.existsSync(realDatastore)) {
     assert.doesNotMatch(fs.readFileSync(realDatastore, 'utf8'), /Secret Shared Ops/, 'no fixture reached the real datastore');
   }

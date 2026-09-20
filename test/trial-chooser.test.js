@@ -32,6 +32,6 @@ test('every featured tile has a hard-coded label so it renders pre-fetch', () =>
   }
 });
 
-test('the preference key sits in the parallax.workspaces family', () => {
-  assert.equal(PREFERRED_REGION_KEY, 'parallax.preferredRegion');
+test('the preference key sits in the philotas.workspaces family', () => {
+  assert.equal(PREFERRED_REGION_KEY, 'philotas.preferredRegion');
 });

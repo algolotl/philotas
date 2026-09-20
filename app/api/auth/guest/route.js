@@ -8,7 +8,7 @@
 // control story is something the visitor experiences rather than something the
 // site claims.
 //
-// Off unless PARALLAX_TRIAL=1, so a private deployment does not accidentally
+// Off unless PHILOTAS_TRIAL=1, so a private deployment does not accidentally
 // grow an anonymous door.
 
 import { createUser, authenticate, startSession, setCookie } from '@/lib/auth';
@@ -22,7 +22,7 @@ export const runtime = 'nodejs';
 const GUEST_USERNAME = 'trial';
 
 export async function POST() {
-  if (process.env.PARALLAX_TRIAL !== '1') {
+  if (process.env.PHILOTAS_TRIAL !== '1') {
     return Response.json({ error: 'trial access is not enabled' }, { status: 404 });
   }
 

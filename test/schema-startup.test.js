@@ -32,13 +32,13 @@ let semanticPool;
 
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-schema-startup-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-schema-startup-'));
   previousDatabaseUrl = process.env.DATABASE_URL;
   previousNextRuntime = process.env.NEXT_RUNTIME;
   // Set to a deliberately unusable value first, then deleted, so the delete is
   // proven on a developer box too rather than being a line that only matters
   // where nobody looks. Nothing dials it: pgBackend connects lazily.
-  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
   delete process.env.DATABASE_URL;
   process.chdir(tempDir);
   ({ ensureSemanticSchema, lastStartupResult, _resetStartupResult } = await import('../lib/schema/startup.js'));

@@ -31,7 +31,7 @@
 
 const PROBE_RADIUS_NM = 150;
 const PACING_MS = 1200;
-const USER_AGENT = 'parallax-region-probe/1.0 (maritime common operating picture; ADS-B coverage survey)';
+const USER_AGENT = 'philotas-region-probe/1.0 (maritime common operating picture; ADS-B coverage survey)';
 
 // id, name, theatre, country, type, [lon, lat]
 //

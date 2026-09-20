@@ -193,7 +193,7 @@ export default function Page() {
 
   // Saved workspaces (localStorage).
   useEffect(() => {
-    try { const raw = localStorage.getItem('parallax.workspaces'); if (raw) setWorkspaces(JSON.parse(raw)); } catch { /* ignore */ }
+    try { const raw = localStorage.getItem('philotas.workspaces'); if (raw) setWorkspaces(JSON.parse(raw)); } catch { /* ignore */ }
   }, []);
 
   // Load the region's context (centre, sites, active layers, arc) and re-aim.
@@ -613,7 +613,7 @@ export default function Page() {
 
   function persistWorkspaces(next) {
     setWorkspaces(next);
-    try { localStorage.setItem('parallax.workspaces', JSON.stringify(next)); } catch { /* ignore */ }
+    try { localStorage.setItem('philotas.workspaces', JSON.stringify(next)); } catch { /* ignore */ }
   }
 
   // Apply a workspace's saved view (used by both local and server loads).

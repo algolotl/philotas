@@ -39,7 +39,7 @@ export function createFerrySource({ apiKey, onReport, log = console }) {
     if (stopped) return;
     try {
       const res = await fetch(FERRIES_URL, {
-        headers: { Authorization: `apikey ${apiKey}`, 'User-Agent': 'parallax-ingest/0.1' },
+        headers: { Authorization: `apikey ${apiKey}`, 'User-Agent': 'philotas-ingest/0.1' },
       });
       if (!res.ok) throw new Error(`ferries ${res.status}`);
 

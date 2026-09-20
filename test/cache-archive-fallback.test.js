@@ -25,7 +25,7 @@ register(`data:text/javascript,${encodeURIComponent(jsonImportShim)}`, import.me
 // lib/frames.js roots its file backend at process.cwd() and picks its backend
 // from DATABASE_URL at import time, so both are fixed before importing.
 const cwd = process.cwd();
-const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-archive-fallback-'));
+const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-archive-fallback-'));
 
 let cache;
 let payloadVersionFor;

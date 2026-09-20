@@ -93,7 +93,7 @@ const vulnerableBody = (err) => JSON.stringify({ error: String(err?.message || e
 const seamSource = `
   const real = await import(${JSON.stringify(realDbUrl)});
   const fail = (op) => {
-    const seam = globalThis.__parallaxRegisterSeam;
+    const seam = globalThis.__philotasRegisterSeam;
     if (!seam || seam.failAt !== op) return;
     seam.thrownFrom = op;
     throw seam.failWith;
@@ -160,12 +160,12 @@ let isDisclosable;
 // lib/db.js:76 reads process.cwd() at import time.
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-register-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-register-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   delete process.env.DATABASE_URL;
 
-  globalThis.__parallaxRegisterSeam = { failAt: null, failWith: null };
+  globalThis.__philotasRegisterSeam = { failAt: null, failWith: null };
 
   process.chdir(tempDir);
 
@@ -178,7 +178,7 @@ after(() => {
   process.chdir(originalCwd);
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
-  delete globalThis.__parallaxRegisterSeam;
+  delete globalThis.__philotasRegisterSeam;
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
@@ -205,7 +205,7 @@ async function capturingLogs(fn) {
 // Post while the datastore fails at `failAt` with `failWith`, then put the seam
 // back. Returns the status, the exact bytes, and the server log.
 async function postWhileFailing({ failAt, failWith, body }) {
-  globalThis.__parallaxRegisterSeam = { failAt, failWith, thrownFrom: null };
+  globalThis.__philotasRegisterSeam = { failAt, failWith, thrownFrom: null };
   try {
     const { result: res, logged } = await capturingLogs(() => POST(registerRequest(body)));
     const text = await res.text();
@@ -213,13 +213,13 @@ async function postWhileFailing({ failAt, failWith, body }) {
     // about. Without it a case whose fixture stopped failing would assert
     // "no driver message on the wire" against a plain success and pass.
     assert.equal(
-      globalThis.__parallaxRegisterSeam.thrownFrom,
+      globalThis.__philotasRegisterSeam.thrownFrom,
       failAt,
       `the seam never threw from ${failAt}, so this case tested nothing`
     );
     return { status: res.status, text, logged };
   } finally {
-    globalThis.__parallaxRegisterSeam = { failAt: null, failWith: null };
+    globalThis.__philotasRegisterSeam = { failAt: null, failWith: null };
   }
 }
 
@@ -227,7 +227,7 @@ test('the fixtures went to the throwaway datastore, not a real one', () => {
   assert.equal(process.env.DATABASE_URL, undefined, 'a surviving DATABASE_URL would put these fixtures in a live database');
   assert.equal(process.cwd(), fs.realpathSync(tempDir), 'the file backend must be pointed at the temp directory');
 
-  const realDatastore = path.join(originalCwd, '.data', 'parallax-db.json');
+  const realDatastore = path.join(originalCwd, '.data', 'philotas-db.json');
   const realContents = fs.existsSync(realDatastore) ? fs.readFileSync(realDatastore, 'utf8') : '';
   assert.doesNotMatch(realContents, /disclosure-first/, 'a fixture reached the real datastore');
 });
@@ -237,9 +237,9 @@ test('a fresh username still registers, so the fix did not break the door', asyn
   const text = await res.text();
   assert.equal(res.status, 200, text);
   assert.deepEqual(JSON.parse(text), { user: { username: 'disclosure-first' } });
-  assert.match(res.headers.get('set-cookie') || '', /^parallax_session=[0-9a-f]{64};/, 'a successful registration still starts a session');
+  assert.match(res.headers.get('set-cookie') || '', /^philotas_session=[0-9a-f]{64};/, 'a successful registration still starts a session');
 
-  const scratchDatastore = path.join(tempDir, '.data', 'parallax-db.json');
+  const scratchDatastore = path.join(tempDir, '.data', 'philotas-db.json');
   assert.match(fs.readFileSync(scratchDatastore, 'utf8'), /disclosure-first/, 'the account was not actually written');
 });
 
@@ -253,7 +253,7 @@ test('registration still tells an unauthenticated caller the username is taken',
   assert.equal(res.status, 400, 'a taken username IS the caller\'s bad request');
   assert.equal(JSON.parse(text).error, 'username already taken');
   // The refusal is real, not a second account with the same name.
-  const stored = JSON.parse(fs.readFileSync(path.join(tempDir, '.data', 'parallax-db.json'), 'utf8'));
+  const stored = JSON.parse(fs.readFileSync(path.join(tempDir, '.data', 'philotas-db.json'), 'utf8'));
   assert.equal(stored.users.filter((u) => u.username === 'disclosure-first').length, 1);
 });
 
@@ -439,7 +439,7 @@ test('a failure in the duplicate CHECK is not reported as a duplicate', async ()
   assert.doesNotMatch(text, /already taken/, 'an unreachable datastore was reported as a taken username');
   assert.equal(occurrences(text, CONNECT_REFUSED), 0);
 
-  const stored = JSON.parse(fs.readFileSync(path.join(tempDir, '.data', 'parallax-db.json'), 'utf8'));
+  const stored = JSON.parse(fs.readFileSync(path.join(tempDir, '.data', 'philotas-db.json'), 'utf8'));
   assert.equal(stored.users.some((u) => u.username === 'disclosure-check-fail'), false, 'the account was created anyway');
 });
 
@@ -529,7 +529,7 @@ test('createUser marks its own refusals as disclosable and nothing else', async 
   // The escaped case, driven through the real createUser rather than asserted
   // against a hand-made error: whatever the datastore throws must NOT come back
   // marked, or the route would forward it.
-  globalThis.__parallaxRegisterSeam = { failAt: 'insertUser', failWith: new Error(CONNECT_REFUSED), thrownFrom: null };
+  globalThis.__philotasRegisterSeam = { failAt: 'insertUser', failWith: new Error(CONNECT_REFUSED), thrownFrom: null };
   try {
     await assert.rejects(
       () => createUser('disclosure-unmarked', 'not-a-real-password-11'),
@@ -540,7 +540,7 @@ test('createUser marks its own refusals as disclosable and nothing else', async 
       }
     );
   } finally {
-    globalThis.__parallaxRegisterSeam = { failAt: null, failWith: null };
+    globalThis.__philotasRegisterSeam = { failAt: null, failWith: null };
   }
 
   // The three shapes the predicate has to survive being handed.
@@ -572,16 +572,16 @@ test('createUser answers a lost race with the pre-check\'s own error, not the dr
     (err) => err
   );
 
-  globalThis.__parallaxRegisterSeam = { failAt: 'insertUser', failWith: uniqueViolation(), thrownFrom: null };
+  globalThis.__philotasRegisterSeam = { failAt: 'insertUser', failWith: uniqueViolation(), thrownFrom: null };
   let raceError;
   try {
     raceError = await createUser('disclosure-race-lib', 'not-a-real-password-18').then(
       () => assert.fail('the refused INSERT was swallowed and registration reported success'),
       (err) => err
     );
-    assert.equal(globalThis.__parallaxRegisterSeam.thrownFrom, 'insertUser', 'the seam never threw, so this tested nothing');
+    assert.equal(globalThis.__philotasRegisterSeam.thrownFrom, 'insertUser', 'the seam never threw, so this tested nothing');
   } finally {
-    globalThis.__parallaxRegisterSeam = { failAt: null, failWith: null };
+    globalThis.__philotasRegisterSeam = { failAt: null, failWith: null };
   }
 
   assert.equal(isDisclosable(raceError), true, 'the race stayed an internal failure, so the caller is told the service is broken');

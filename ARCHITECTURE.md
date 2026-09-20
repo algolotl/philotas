@@ -158,7 +158,7 @@ deterministic heuristic fallback.
 | `lib/detection.js` | Server-side client for the Python detection service (`DETECTION_URL`). |
 | `lib/db.js` | Repository over two backends: Postgres (`DATABASE_URL`) or file (`.data/`). |
 | `lib/auth.js` | Password auth, sessions, roles (viewer/operator/admin) + clearance levels. |
-| `lib/guard.js` | Route guard — every read route requires a session (`PARALLAX_OPEN_READ` opt-out). |
+| `lib/guard.js` | Route guard — every read route requires a session (`PHILOTAS_OPEN_READ` opt-out). |
 | `lib/audit.js` / `lib/trail-key.js` | Audit-trail helper + keying. |
 | `lib/teams.js` | Team/workspace sharing. |
 | `lib/geo.js` / `lib/projection.js` | Geospatial + projection helpers. |

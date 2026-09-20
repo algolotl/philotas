@@ -23,7 +23,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-const UNREACHABLE = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+const UNREACHABLE = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
 
 let originalCwd;
 let tempDir;
@@ -33,7 +33,7 @@ let semanticPool;
 
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-schema-startup-pg-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-schema-startup-pg-'));
   previousDatabaseUrl = process.env.DATABASE_URL;
   // Overwritten, not read: whatever this box has configured is irrelevant and
   // must not be dialled. The overwrite happens before the import below, which

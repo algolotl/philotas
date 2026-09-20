@@ -6,7 +6,7 @@ import { register } from 'node:module';
 // argument rests on, and which nothing was pinning.
 //
 // It needs its own file. test/poller-reaping.test.js sets
-// PARALLAX_WARM_REGIONS explicitly before it imports lib/cache.js — correctly,
+// PHILOTAS_WARM_REGIONS explicitly before it imports lib/cache.js — correctly,
 // because it is testing the reaping mechanism — and lib/cache.js reads the
 // variable once at module scope, so that file can never observe the fallback.
 // Measured on this branch: changing the default from 'sydney' to
@@ -40,8 +40,8 @@ let previousDatabaseUrl;
 before(async () => {
   // Unset, so what is measured below is the fallback in lib/cache.js and not
   // whatever this machine happens to export. Restored in `after`.
-  previousWarm = process.env.PARALLAX_WARM_REGIONS;
-  delete process.env.PARALLAX_WARM_REGIONS;
+  previousWarm = process.env.PHILOTAS_WARM_REGIONS;
+  delete process.env.PHILOTAS_WARM_REGIONS;
 
   // lib/cache.js pulls in lib/frames.js, which picks its archive backend from
   // DATABASE_URL at import time. Nothing here calls getFeed() so nothing is
@@ -57,8 +57,8 @@ before(async () => {
 });
 
 after(() => {
-  if (previousWarm === undefined) delete process.env.PARALLAX_WARM_REGIONS;
-  else process.env.PARALLAX_WARM_REGIONS = previousWarm;
+  if (previousWarm === undefined) delete process.env.PHILOTAS_WARM_REGIONS;
+  else process.env.PHILOTAS_WARM_REGIONS = previousWarm;
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
 });

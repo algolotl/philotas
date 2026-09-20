@@ -143,7 +143,7 @@ test('a mode other than ferries is unaffected by the shared cache', async () => 
 //   transport   10s x 5 endpoints   ferries, sydneytrains, buses, lightrail,
 //                                   metro — region sydney's transport.sources
 //                                   in lib/regions.js.  5 x 8,640 = 43,200/day
-//   ingest      20s x 1 endpoint    parallax-ingest polls the ferry endpoint
+//   ingest      20s x 1 endpoint    philotas-ingest polls the ferry endpoint
 //                                   itself, on the same key
 //                                   (ingest/src/ferry-source.js).  = 4,320/day
 //   cameras    300s x 1 endpoint    the TfNSW Live Traffic GeoJSON, on the same

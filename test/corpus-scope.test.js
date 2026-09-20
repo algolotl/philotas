@@ -16,7 +16,7 @@
 // Same import discipline as test/db.test.js and test/guard.test.js:
 // DATABASE_URL removed and cwd moved to a throwaway directory before lib/db.js
 // is imported, because it picks its backend and its file path at import time.
-// PARALLAX_OPEN_READ is removed too — left set by the surrounding shell it would
+// PHILOTAS_OPEN_READ is removed too — left set by the surrounding shell it would
 // switch off the read gate that the refusal test is about.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -37,7 +37,7 @@ let listUsers;
 
 const requestWithSession = (token) =>
   new Request('http://localhost/api/corpus/search?q=x', {
-    headers: { cookie: `parallax_session=${token}` },
+    headers: { cookie: `philotas_session=${token}` },
   });
 
 const requestWithoutSession = () =>
@@ -55,18 +55,18 @@ let sharedWithAnalystCase;
 // would race the import against the seed. See the same note in test/db.test.js.
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-scope-test-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-scope-test-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   // Set to a deliberately unusable value first, then deleted, so the delete is
   // proven on a developer box too rather than being a line that only matters
   // where nobody looks. Nothing dials it: the Postgres backend connects lazily
   // and the first test asserts the file backend took the fixtures.
-  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
   delete process.env.DATABASE_URL;
 
-  previousOpenRead = process.env.PARALLAX_OPEN_READ;
-  delete process.env.PARALLAX_OPEN_READ;
+  previousOpenRead = process.env.PHILOTAS_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 
   process.chdir(tempDir);
 
@@ -106,8 +106,8 @@ after(() => {
   process.chdir(originalCwd);
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
-  if (previousOpenRead === undefined) delete process.env.PARALLAX_OPEN_READ;
-  else process.env.PARALLAX_OPEN_READ = previousOpenRead;
+  if (previousOpenRead === undefined) delete process.env.PHILOTAS_OPEN_READ;
+  else process.env.PHILOTAS_OPEN_READ = previousOpenRead;
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
@@ -119,9 +119,9 @@ const asSet = (ids) => [...ids].sort();
 
 test('the fixtures went to the throwaway datastore, not a real one', async () => {
   assert.equal(process.env.DATABASE_URL, undefined, 'a surviving DATABASE_URL would put these fixtures in a live database');
-  assert.equal(process.env.PARALLAX_OPEN_READ, undefined, 'the refusal test below is meaningless with the read gate switched off');
+  assert.equal(process.env.PHILOTAS_OPEN_READ, undefined, 'the refusal test below is meaningless with the read gate switched off');
 
-  const scratchDatastore = path.join(tempDir, '.data', 'parallax-db.json');
+  const scratchDatastore = path.join(tempDir, '.data', 'philotas-db.json');
   assert.ok(
     fs.existsSync(scratchDatastore),
     'the file backend must be the one that took the fixtures, and it must be rooted in the temp dir'
@@ -137,7 +137,7 @@ test('the fixtures went to the throwaway datastore, not a real one', async () =>
     assert.ok(created.has(user.username), `unexpected account ${user.username} — this is not a throwaway datastore`);
   }
 
-  const realDatastore = path.join(originalCwd, '.data', 'parallax-db.json');
+  const realDatastore = path.join(originalCwd, '.data', 'philotas-db.json');
   if (fs.existsSync(realDatastore)) {
     assert.doesNotMatch(fs.readFileSync(realDatastore, 'utf8'), /scope-analyst/, 'no fixture reached the real datastore');
   }
@@ -171,7 +171,7 @@ test('a request parameter cannot widen the scope', async () => {
   // reads the URL, so the parameter is inert.
   const req = new Request(
     `http://localhost/api/corpus/search?q=x&caseIds=${strangerCase.id}&clearance=3`,
-    { headers: { cookie: `parallax_session=${analystToken}` } }
+    { headers: { cookie: `philotas_session=${analystToken}` } }
   );
   const { caseIds, clearance } = await sessionScope(req);
   assert.deepEqual(asSet(caseIds), asSet([ownCase.id, sharedWithAnalystCase.id]), 'the requested case was ignored');
@@ -222,7 +222,7 @@ test('with the read gate open, a caller with no session still holds no cases', a
     'the bait must be visible to a userless workspace lookup, or this test proves nothing'
   );
 
-  process.env.PARALLAX_OPEN_READ = '1';
+  process.env.PHILOTAS_OPEN_READ = '1';
   try {
     const { user, caseIds, clearance, response } = await sessionScope(requestWithoutSession());
     assert.equal(response, null, 'the escape hatch is what it is for — the viewer-level read is let through');
@@ -230,6 +230,6 @@ test('with the read gate open, a caller with no session still holds no cases', a
     assert.deepEqual(caseIds, [], 'no user means no cases, not every unclassified shared case');
     assert.equal(clearance, 0, 'and the lowest possible ceiling');
   } finally {
-    delete process.env.PARALLAX_OPEN_READ;
+    delete process.env.PHILOTAS_OPEN_READ;
   }
 });

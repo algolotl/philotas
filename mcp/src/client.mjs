@@ -46,7 +46,7 @@ export function createClient(options = {}) {
     if (sessionPromise) return sessionPromise;
     sessionPromise = (async () => {
       if (authToken) {
-        sessionCookie = 'parallax_session=' + authToken;
+        sessionCookie = 'philotas_session=' + authToken;
         return;
       }
       if (guest && !(username && password)) {
@@ -62,9 +62,9 @@ export function createClient(options = {}) {
         }
         if (!res.ok) throw new PhilotasHttpError(res.status, guestUrl.toString(), 'guest session unavailable');
         const setCookie = res.headers.get('set-cookie') || '';
-        const match = setCookie.match(/parallax_session=([^;]+)/);
+        const match = setCookie.match(/philotas_session=([^;]+)/);
         if (!match) throw new PhilotasApiError('guest session succeeded but no session cookie was set', { url: guestUrl.toString() });
-        sessionCookie = 'parallax_session=' + match[1];
+        sessionCookie = 'philotas_session=' + match[1];
         return;
       }
       const loginUrl = new URL('/api/auth/login', baseUrl);
@@ -89,9 +89,9 @@ export function createClient(options = {}) {
         throw new PhilotasHttpError(res.status, loginUrl.toString(), body || reason);
       }
       const setCookie = res.headers.get('set-cookie') || '';
-      const match = setCookie.match(/parallax_session=([^;]+)/);
+      const match = setCookie.match(/philotas_session=([^;]+)/);
       if (!match) throw new PhilotasApiError('login succeeded but no session cookie was set', { url: loginUrl.toString() });
-      sessionCookie = 'parallax_session=' + match[1];
+      sessionCookie = 'philotas_session=' + match[1];
     })();
     return sessionPromise;
   }

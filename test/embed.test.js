@@ -208,7 +208,7 @@ test('the model probe is cached per process, not repeated on every batch', async
 test('a failed probe is not cached, so a transient outage does not poison the process', async () => {
   // A cache that stored the rejection would make one refused connection
   // permanent for the lifetime of the process — the embedder would come back and
-  // parallax would not.
+  // philotas would not.
   const realFetch = globalThis.fetch;
   _resetModelProbe();
   let attempt = 0;
@@ -378,7 +378,7 @@ test('a malformed embeddings payload the client refused reads as malformed, not 
         // THIS file's own prefix, which is the assertion that does the work.
         // EmbedUnavailable wraps the identical client text with 'embedder
         // unavailable: ', so nothing below would tell the two apart on its own.
-        assert.match(err.message, /^embedder malformed response: /, 'parallax says which of its own two states this is');
+        assert.match(err.message, /^embedder malformed response: /, 'philotas says which of its own two states this is');
         // The client's detail, asserted for PRESERVATION rather than for
         // classification: an operator still needs to know which input came back
         // wrong and where, and re-wrapping must not discard it.
@@ -476,13 +476,13 @@ test('the vectors, the tokenizer and the model probe all resolve through the ada
 test('every call is attributed, so chunking cost is separable from query cost', async () => {
   const seen = [];
   await withFetch(routedFetch({ seen }), async () => {
-    await embed(['x'], { app: 'parallax/corpus' });
-    await countTokens('x', { app: 'parallax/corpus' });
+    await embed(['x'], { app: 'philotas/corpus' });
+    await countTokens('x', { app: 'philotas/corpus' });
   });
   // Three calls now, and the probe is one of them. An unattributed probe would
   // show up in the embedder's own accounting as traffic from nobody.
   assert.deepEqual(
     seen.map((s) => s.init?.headers?.['X-Algolotl-App']),
-    ['parallax/corpus', 'parallax/corpus', 'parallax/corpus']
+    ['philotas/corpus', 'philotas/corpus', 'philotas/corpus']
   );
 });

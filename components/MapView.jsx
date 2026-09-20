@@ -62,7 +62,7 @@ export default function MapView({ enabled, command, onSelect, onStatus, ontology
     map.on('error', (e) => {
       console.error('[maplibre]', e?.error?.message || e?.error || e);
     });
-    if (typeof window !== 'undefined') window.__parallaxMap = map;
+    if (typeof window !== 'undefined') window.__philotasMap = map;
 
     map.on('styleimagemissing', (e) => {
       if (e.id !== 'triangle' || map.hasImage('triangle')) return;

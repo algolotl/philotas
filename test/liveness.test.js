@@ -156,7 +156,7 @@ const STUB_FETCHED_AT_MS = 1755400000000;
 const cacheSeamSource = `
   export const FETCHERS = ${JSON.stringify(Object.fromEntries(SEAMED_FEED_KEYS.map((k) => [k, 1])))};
   export async function getFeed(key, region) {
-    const seam = globalThis.__parallaxLivenessRouteSeam;
+    const seam = globalThis.__philotasLivenessRouteSeam;
     seam.feedCalls.push({ key, regionId: region?.id });
     const result = seam.results[key];
     // Loud rather than empty: a missing fixture must not be servable as a feed
@@ -184,7 +184,7 @@ const feedHealthSeamSource = `
   export const splitContactCounts = real.splitContactCounts;
   export function feedResultIsLive(feedResult) {
     const verdict = real.feedResultIsLive(feedResult);
-    globalThis.__parallaxLivenessRouteSeam.verdicts.push(verdict);
+    globalThis.__philotasLivenessRouteSeam.verdicts.push(verdict);
     return verdict;
   }
 `;
@@ -239,19 +239,19 @@ let sessionToken;
 //
 // NOTHING HERE REACHES A DATABASE OR A NETWORK. DATABASE_URL is removed before
 // lib/db.js is imported, which is the only moment it reads it, so the session
-// fixture goes to the file backend in a temp directory. PARALLAX_OPEN_READ is
+// fixture goes to the file backend in a temp directory. PHILOTAS_OPEN_READ is
 // removed too: left set by the surrounding shell it would change which caller
 // these responses are being served to.
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-liveness-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-liveness-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   delete process.env.DATABASE_URL;
-  previousOpenRead = process.env.PARALLAX_OPEN_READ;
-  delete process.env.PARALLAX_OPEN_READ;
+  previousOpenRead = process.env.PHILOTAS_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 
-  globalThis.__parallaxLivenessRouteSeam = { feedCalls: [], verdicts: [], results: {} };
+  globalThis.__philotasLivenessRouteSeam = { feedCalls: [], verdicts: [], results: {} };
 
   process.chdir(tempDir);
 
@@ -279,16 +279,16 @@ after(() => {
   process.chdir(originalCwd);
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
-  if (previousOpenRead === undefined) delete process.env.PARALLAX_OPEN_READ;
-  else process.env.PARALLAX_OPEN_READ = previousOpenRead;
-  delete globalThis.__parallaxLivenessRouteSeam;
+  if (previousOpenRead === undefined) delete process.env.PHILOTAS_OPEN_READ;
+  else process.env.PHILOTAS_OPEN_READ = previousOpenRead;
+  delete globalThis.__philotasLivenessRouteSeam;
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
-const cookie = () => ({ headers: { cookie: `parallax_session=${sessionToken}` } });
+const cookie = () => ({ headers: { cookie: `philotas_session=${sessionToken}` } });
 
 function install(resultsByKey) {
-  const seam = globalThis.__parallaxLivenessRouteSeam;
+  const seam = globalThis.__philotasLivenessRouteSeam;
   seam.results = resultsByKey;
   seam.verdicts = [];
   return seam;
@@ -433,7 +433,7 @@ test('neither route decides liveness itself; both ask lib/feed-health.js at requ
   install({ vessels: cacheDead.result });
   await feedBody('vessels');
   assert.deepEqual(
-    globalThis.__parallaxLivenessRouteSeam.verdicts, [false],
+    globalThis.__philotasLivenessRouteSeam.verdicts, [false],
     'the feeds route reached the shared rule exactly once, or it is deciding liveness itself'
   );
 });

@@ -8,7 +8,7 @@
 // from the parsed body — so whatever the stub put on the wire arrived at the loop
 // unexamined. 0.3.0 validates `relevance_score` in its own readScores() and
 // throws MalformedResponse first, which means the loop is no longer reachable
-// through a `fetch` stub at all: test/rerank.test.js now pins how parallax
+// through a `fetch` stub at all: test/rerank.test.js now pins how philotas
 // CLASSIFIES the client's refusal, and nothing there touches the loop.
 //
 // The loop is deliberate defence in depth — the client is pinned by commit, so a
@@ -50,7 +50,7 @@ const clientSeamSource = `
   import { rerank as realRerank } from ${JSON.stringify(realLlmUrl)};
   export * from ${JSON.stringify(realLlmUrl)};
   export async function rerank(query, documents, opts) {
-    const seam = globalThis.__parallaxRerankClientSeam;
+    const seam = globalThis.__philotasRerankClientSeam;
     if (seam) return { scores: seam.scores };
     return realRerank(query, documents, opts);
   }
@@ -87,11 +87,11 @@ process.env.PHILOTAS_LLM_URL = 'http://bge_8005';
 
 /** Run `fn` with the client returning `scores` instead of calling the service. */
 const withClientScores = async (scores, fn) => {
-  globalThis.__parallaxRerankClientSeam = { scores };
+  globalThis.__philotasRerankClientSeam = { scores };
   try {
     return await fn();
   } finally {
-    delete globalThis.__parallaxRerankClientSeam;
+    delete globalThis.__philotasRerankClientSeam;
   }
 };
 
@@ -102,7 +102,7 @@ const withClientScores = async (scores, fn) => {
 // and continues 'which is not a finite number'. A test that passed on the client's
 // message would not be reaching the loop.
 const rows = [
-  // label                    scores      expected tail of parallax's own message
+  // label                    scores      expected tail of philotas's own message
   ['NaN', [NaN], 'index 0 scored NaN (number)'],
   ['+Infinity', [Infinity], 'index 0 scored Infinity (number)'],
   ['-Infinity', [-Infinity], 'index 0 scored -Infinity (number)'],
@@ -213,7 +213,7 @@ test('with nothing installed the seam delegates to the real client, so these tes
   // happens when no scores are installed. It fails if the seam is faking
   // unconditionally, and the tests above fail if the seam is not installed at
   // all, so NOT APPLIED and SURVIVED cannot be confused.
-  assert.equal(globalThis.__parallaxRerankClientSeam, undefined);
+  assert.equal(globalThis.__philotasRerankClientSeam, undefined);
   await assert.rejects(
     () => rerank('q', ['a']),
     (err) => {

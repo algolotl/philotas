@@ -14,7 +14,7 @@ import { NEWS_PAYLOAD_VERSION } from '../lib/feeds/news.js';
 // real .data/ — a test that deletes two days of frames because it shared a
 // directory with the running server is a bad afternoon.
 const cwd = process.cwd();
-const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-frames-'));
+const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-frames-'));
 
 let frames;
 

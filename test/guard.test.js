@@ -8,7 +8,7 @@ import path from 'node:path';
 // it is first imported (DIR = path.join(process.cwd(), '.data')). We chdir
 // into a scratch directory *before* dynamically importing anything that
 // pulls db.js in, so a real login flow here writes to a throwaway
-// .data/parallax-db.json instead of the developer's real one. Each test file
+// .data/philotas-db.json instead of the developer's real one. Each test file
 // under `node --test` runs in its own child process, so this chdir cannot
 // leak into any other test file — verified empirically before writing this.
 //
@@ -28,14 +28,14 @@ let startSession;
 
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-guard-test-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-guard-test-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   // Set to a deliberately unusable value first, then deleted, so the delete is
   // proven on a developer box too. Nothing dials it: lib/db.js's pgBackend
   // connects lazily and the assertion in the final test fires long before any
   // query would.
-  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
   delete process.env.DATABASE_URL;
 
   process.chdir(tempDir);
@@ -51,11 +51,11 @@ after(() => {
 });
 
 function requestWithCookie(token) {
-  const headers = token ? { cookie: `parallax_session=${token}` } : {};
+  const headers = token ? { cookie: `philotas_session=${token}` } : {};
   return new Request('http://localhost/api/test', { headers });
 }
 
-// ---------------------------------------------------------------- PARALLAX_OPEN_READ
+// ---------------------------------------------------------------- PHILOTAS_OPEN_READ
 // This is the escape hatch's whole reason for existing: it must widen exactly
 // one thing (unauthenticated viewer-level reads on a closed network) and
 // nothing else. If it ever leaked into operator/admin, an unauthenticated
@@ -63,7 +63,7 @@ function requestWithCookie(token) {
 // supposed to expose read-only data without a login prompt.
 
 test('no session, flag unset: viewer read is unauthorised', async () => {
-  delete process.env.PARALLAX_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
   const { user, response } = await requireUser(requestWithCookie(null), 'viewer');
   assert.equal(user, null);
   assert.ok(response, 'expected a denial response');
@@ -71,38 +71,38 @@ test('no session, flag unset: viewer read is unauthorised', async () => {
 });
 
 test('no session, flag=1: viewer read is let through', async () => {
-  process.env.PARALLAX_OPEN_READ = '1';
+  process.env.PHILOTAS_OPEN_READ = '1';
   const { user, response } = await requireUser(requestWithCookie(null), 'viewer');
   assert.equal(user, null);
   assert.equal(response, null, 'the escape hatch should return no response at viewer level');
-  delete process.env.PARALLAX_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 });
 
 test('no session, flag=1: operator route is still unauthorised', async () => {
-  process.env.PARALLAX_OPEN_READ = '1';
+  process.env.PHILOTAS_OPEN_READ = '1';
   const { user, response } = await requireUser(requestWithCookie(null), 'operator');
   assert.equal(user, null);
   assert.ok(response, 'the escape hatch must not apply above viewer');
   assert.equal(response.status, 401);
-  delete process.env.PARALLAX_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 });
 
 test('no session, flag=1: admin route is still unauthorised', async () => {
-  process.env.PARALLAX_OPEN_READ = '1';
+  process.env.PHILOTAS_OPEN_READ = '1';
   const { user, response } = await requireUser(requestWithCookie(null), 'admin');
   assert.ok(response);
   assert.equal(response.status, 401);
-  delete process.env.PARALLAX_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 });
 
 test('flag is only recognised at the exact string "1"', async () => {
   // openRead() checks `=== '1'`. Truthy-but-not-'1' values (a stray "true",
   // or a leftover "0") must not enable the hatch.
-  process.env.PARALLAX_OPEN_READ = 'true';
+  process.env.PHILOTAS_OPEN_READ = 'true';
   const { response } = await requireUser(requestWithCookie(null), 'viewer');
   assert.ok(response, '"true" must not be treated as enabling the escape hatch');
   assert.equal(response.status, 401);
-  delete process.env.PARALLAX_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 });
 
 // ---------------------------------------------------------------- role gating
@@ -139,12 +139,12 @@ test('the accounts went to the throwaway datastore, not to a real one', () => {
   // lib/db.js exports no backend name, so the backend is identified by where
   // the accounts above landed. A surviving DATABASE_URL means no file here and
   // a real `guard-admin` in a live database; a lost chdir means the accounts
-  // are in the developer's own .data/parallax-db.json.
-  const scratchDatastore = path.join(tempDir, '.data', 'parallax-db.json');
+  // are in the developer's own .data/philotas-db.json.
+  const scratchDatastore = path.join(tempDir, '.data', 'philotas-db.json');
   assert.ok(fs.existsSync(scratchDatastore), 'the file backend must be the one that took the accounts');
   assert.match(fs.readFileSync(scratchDatastore, 'utf8'), /guard-admin/);
 
-  const realDatastore = path.join(originalCwd, '.data', 'parallax-db.json');
+  const realDatastore = path.join(originalCwd, '.data', 'philotas-db.json');
   if (fs.existsSync(realDatastore)) {
     assert.doesNotMatch(fs.readFileSync(realDatastore, 'utf8'), /guard-admin/, 'no test account reached the real datastore');
   }
@@ -171,7 +171,7 @@ test('a session for a user with no clearance reads as UNCLASSIFIED', async () =>
   await db.setUserRole(id, 'operator', undefined);
 
   const user = await currentUser(new Request('http://localhost/', {
-    headers: { cookie: `parallax_session=${token}` },
+    headers: { cookie: `philotas_session=${token}` },
   }));
 
   assert.ok(user, 'the session should still resolve; only the clearance default is under test');

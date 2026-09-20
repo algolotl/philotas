@@ -3,7 +3,7 @@
 //
 // The public repos are fresh snapshots (spec D5): `algolotl/philotas` gets the
 // core tree, `algolotl/philotas-site` gets `site/`, and the full internal
-// history stays in the private `axoquant/parallax` repo. This file is the
+// history stays in the private development repo. This file is the
 // manifest that decides what "curated" means — spec section 2 for the excluded
 // paths, section 3 H4 for the permissioned feed, D9/D10/H1 for the content
 // edits — and it runs the section 8 gates itself, so an export that would leak
@@ -114,7 +114,13 @@ const PRIVATE_PACKAGE = '@axoquant/llm';
 // trip its own gate — the same trick .github/workflows/ci.yml uses, and for the
 // same reason. Without it the script fails the moment it scans itself, which is
 // exactly what it did the first time it was run.
+// Spec D3 is last in the list and first in importance: the old codename is
+// retired in public artefacts, and until this gate existed the rename was done
+// by hand and drifted — the cookie name, the localStorage keys, the LLM app
+// tags and every User-Agent still carried it while the README did not. A gate
+// is the only version of "everywhere" that stays true.
 const GATES = [
+  { name: 'codename (D3)', re: /paral[l]ax/i },
   { name: 'research name (D9)', re: /osiri[s]/i },
   { name: 'internal references (D10)', re: /idc-[1]|alexkovacesk[i]|proprietar[y]|UNLICENSE[D]|C:\/Users\/alexk/i },
   { name: 'secrets', re: /eyJ[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----/ },

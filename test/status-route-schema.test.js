@@ -32,7 +32,7 @@
 //
 // NOTHING HERE REACHES A DATABASE OR A NETWORK. DATABASE_URL is removed before
 // lib/db.js is imported, which is the only moment it reads it, so the file
-// backend takes the fixtures. PARALLAX_OPEN_READ is removed too: left set by the
+// backend takes the fixtures. PHILOTAS_OPEN_READ is removed too: left set by the
 // surrounding shell it would switch off the gate the refusal test is about.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -66,7 +66,7 @@ const SCHEMA_FAILED_DETAIL = 'permission denied to create extension "vector"';
 const cacheSeamSource = `
   export const FETCHERS = ${JSON.stringify(Object.fromEntries(SEAMED_FEED_KEYS.map((k) => [k, 1])))};
   export async function getFeed(key, region) {
-    globalThis.__parallaxStatusRouteSeam.feedCalls.push({ key, regionId: region?.id });
+    globalThis.__philotasStatusRouteSeam.feedCalls.push({ key, regionId: region?.id });
     return {
       payload: { type: 'FeatureCollection', features: [{}, {}], source: 'stub-upstream' },
       at: ${STUB_FETCHED_AT_MS},
@@ -127,14 +127,14 @@ let defaultRegionId;
 // import against the seed. Same note as test/corpus-search-route.test.js.
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-status-schema-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-status-schema-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   delete process.env.DATABASE_URL;
-  previousOpenRead = process.env.PARALLAX_OPEN_READ;
-  delete process.env.PARALLAX_OPEN_READ;
+  previousOpenRead = process.env.PHILOTAS_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 
-  globalThis.__parallaxStatusRouteSeam = { feedCalls: [] };
+  globalThis.__philotasStatusRouteSeam = { feedCalls: [] };
 
   process.chdir(tempDir);
 
@@ -166,16 +166,16 @@ after(() => {
   process.chdir(originalCwd);
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
-  if (previousOpenRead === undefined) delete process.env.PARALLAX_OPEN_READ;
-  else process.env.PARALLAX_OPEN_READ = previousOpenRead;
-  delete globalThis.__parallaxStatusRouteSeam;
+  if (previousOpenRead === undefined) delete process.env.PHILOTAS_OPEN_READ;
+  else process.env.PHILOTAS_OPEN_READ = previousOpenRead;
+  delete globalThis.__philotasStatusRouteSeam;
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
 const requestFor = (token) =>
   new Request(
     'http://localhost/api/status',
-    token ? { headers: { cookie: `parallax_session=${token}` } } : undefined
+    token ? { headers: { cookie: `philotas_session=${token}` } } : undefined
   );
 
 const statusBody = async (token = sessionToken) => (await GET(requestFor(token))).json();
@@ -201,7 +201,7 @@ const onWire = (s) => JSON.stringify(s).slice(1, -1);
 // is swallowed to keep the suite output pristine — and restored immediately, so
 // nothing else in this file can lose a real error.
 // console.warn is swallowed too: lib/guard.js:26 logs once when
-// PARALLAX_OPEN_READ=1 is first honoured, which the open-read test below has to
+// PHILOTAS_OPEN_READ=1 is first honoured, which the open-read test below has to
 // trigger on purpose.
 async function quietly(fn) {
   const realError = console.error;
@@ -253,15 +253,15 @@ async function driveTo(reason) {
 
 test('the fixtures went to the throwaway datastore, not a real one', async () => {
   assert.equal(process.env.DATABASE_URL, undefined, 'a surviving DATABASE_URL would put these fixtures in a live database');
-  assert.equal(process.env.PARALLAX_OPEN_READ, undefined, 'the refusal test below is meaningless with the read gate switched off');
+  assert.equal(process.env.PHILOTAS_OPEN_READ, undefined, 'the refusal test below is meaningless with the read gate switched off');
 
-  const scratchDatastore = path.join(tempDir, '.data', 'parallax-db.json');
+  const scratchDatastore = path.join(tempDir, '.data', 'philotas-db.json');
   assert.ok(fs.existsSync(scratchDatastore), 'the file backend must be the one that took the fixtures');
   assert.match(fs.readFileSync(scratchDatastore, 'utf8'), /status-reader/);
 
   // Read unconditionally rather than under an `if (exists)`, so this runs on a
   // clean checkout and in CI too. An absent file is itself a pass.
-  const realDatastore = path.join(originalCwd, '.data', 'parallax-db.json');
+  const realDatastore = path.join(originalCwd, '.data', 'philotas-db.json');
   const realContents = fs.existsSync(realDatastore) ? fs.readFileSync(realDatastore, 'utf8') : '';
   assert.doesNotMatch(realContents, /status-reader/, 'a fixture reached the real datastore');
 });
@@ -444,7 +444,7 @@ test("a viewer is refused the refused-DDL message too, grants and extension name
 });
 
 test('the open-read escape hatch does not hand the driver message to an anonymous caller', async () => {
-  // lib/guard.js:18-29 and :43. PARALLAX_OPEN_READ=1 makes viewer-level reads
+  // lib/guard.js:18-29 and :43. PHILOTAS_OPEN_READ=1 makes viewer-level reads
   // unauthenticated, so requireUser() returns user:null with no refusal — a gate
   // that defaulted an absent role to operator, or that only hid detail on the 401
   // path, would leak to the whole internet here.
@@ -452,7 +452,7 @@ test('the open-read escape hatch does not hand the driver message to an anonymou
   const operatorText = await statusText(operatorToken);
   assert.equal(occurrences(operatorText, POOL_FAILED_HOST_PORT), 1, 'the fixture never carried the needle');
 
-  process.env.PARALLAX_OPEN_READ = '1';
+  process.env.PHILOTAS_OPEN_READ = '1';
   try {
     const res = await quietly(() => GET(requestFor(null)));
     assert.equal(res.status, 200, 'the escape hatch really was honoured, so this is the open path');
@@ -463,11 +463,11 @@ test('the open-read escape hatch does not hand the driver message to an anonymou
     assert.equal(schema.reason, 'pool-failed', 'the coarse verdict is still served on the open path');
     assert.equal(Object.hasOwn(schema, 'detail'), false);
   } finally {
-    delete process.env.PARALLAX_OPEN_READ;
+    delete process.env.PHILOTAS_OPEN_READ;
   }
 
   // The hatch really is off again, so nothing after this file's tests inherits it.
-  assert.equal(process.env.PARALLAX_OPEN_READ, undefined);
+  assert.equal(process.env.PHILOTAS_OPEN_READ, undefined);
   assert.equal((await GET(requestFor(null))).status, 401);
 });
 
@@ -508,7 +508,7 @@ test('the handler reads the recorded result instead of applying the schema itsel
 });
 
 test('the schema outcome joined the existing envelope rather than displacing it', async () => {
-  const before = globalThis.__parallaxStatusRouteSeam.feedCalls.length;
+  const before = globalThis.__philotasStatusRouteSeam.feedCalls.length;
   await driveTo('applied');
   const body = await statusBody();
 
@@ -535,7 +535,7 @@ test('the schema outcome joined the existing envelope rather than displacing it'
 
   // Non-vacuity for the feeds half: the seam was really asked, so `feeds` is
   // populated output rather than an empty object that would pass either way.
-  assert.ok(globalThis.__parallaxStatusRouteSeam.feedCalls.length > before, 'no feed was fetched');
+  assert.ok(globalThis.__philotasStatusRouteSeam.feedCalls.length > before, 'no feed was fetched');
   assert.deepEqual(Object.keys(body.feeds).sort(), [...SEAMED_FEED_KEYS].sort());
   assert.equal(body.feeds.vessels.count, 2, 'the feed half of the envelope still carries real counts');
   assert.equal(body.feeds.vessels.live, true);
@@ -556,14 +556,14 @@ test('an unauthenticated caller learns nothing about the schema', async () => {
   const permitted = await statusBody();
   assert.equal(permitted.schema.reason, 'schema-failed', 'this exact state is visible to a session');
 
-  const feedCallsBefore = globalThis.__parallaxStatusRouteSeam.feedCalls.length;
+  const feedCallsBefore = globalThis.__philotasStatusRouteSeam.feedCalls.length;
   const res = await GET(requestFor(null));
   assert.equal(res.status, 401);
   const body = await res.json();
   assert.equal(body.schema, undefined, 'a refusal carries no schema outcome');
   assert.doesNotMatch(JSON.stringify(body), /vector/, 'and no boot detail either');
   assert.equal(
-    globalThis.__parallaxStatusRouteSeam.feedCalls.length,
+    globalThis.__philotasStatusRouteSeam.feedCalls.length,
     feedCallsBefore,
     'a refused caller must be turned away before any work, so the guard is still the first statement'
   );

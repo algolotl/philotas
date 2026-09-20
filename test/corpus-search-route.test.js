@@ -43,7 +43,7 @@
 // Import discipline follows test/db.test.js and test/guard.test.js: DATABASE_URL
 // removed and cwd moved to a throwaway directory before anything pulling in
 // lib/db.js is imported, because it picks its backend and its file path at import
-// time. PARALLAX_OPEN_READ is removed too — left set by the surrounding shell it
+// time. PHILOTAS_OPEN_READ is removed too — left set by the surrounding shell it
 // would switch off the read gate the refusal test is about.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -71,7 +71,7 @@ const realDatabaseModuleUrl = new URL('lib/db.js', repoRootUrl).href;
 const semanticPoolSeamSource = `
   import { semanticPool as realSemanticPool } from ${JSON.stringify(realDatabaseModuleUrl)};
   export async function semanticPool() {
-    const seam = globalThis.__parallaxCorpusRouteSeam;
+    const seam = globalThis.__philotasCorpusRouteSeam;
     if (!seam) return realSemanticPool();
     seam.semanticPoolCalls += 1;
     if (seam.pool !== undefined) return seam.pool;
@@ -92,7 +92,7 @@ const semanticPoolSeamUrl = `data:text/javascript,${encodeURIComponent(semanticP
 const workspaceListerSeamSource = `
   import { listWorkspaces as realListWorkspaces } from ${JSON.stringify(realDatabaseModuleUrl)};
   export async function listWorkspaces(user) {
-    const seam = globalThis.__parallaxCorpusRouteSeam;
+    const seam = globalThis.__philotasCorpusRouteSeam;
     if (seam && seam.workspaceLookupFailure) throw seam.workspaceLookupFailure;
     return realListWorkspaces(user);
   }
@@ -154,18 +154,18 @@ let sharedWithAnalystCase;
 // race the import against the seed. Same note as test/db.test.js.
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-corpus-route-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-corpus-route-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
   // Set to a deliberately unusable value first, then deleted, so the delete is
   // proven on a developer box too rather than being a line that only matters
   // where nobody looks. Nothing dials it: the Postgres backend connects lazily
   // and the first test asserts the file backend took the fixtures.
-  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
   delete process.env.DATABASE_URL;
 
-  previousOpenRead = process.env.PARALLAX_OPEN_READ;
-  delete process.env.PARALLAX_OPEN_READ;
+  previousOpenRead = process.env.PHILOTAS_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
 
   // lib/embed.js and lib/rerank.js resolve their hosts from the @axoquant/llm
   // registry, which holds real internal URLs. On a developer laptop those are
@@ -221,8 +221,8 @@ after(() => {
   process.chdir(originalCwd);
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
-  if (previousOpenRead === undefined) delete process.env.PARALLAX_OPEN_READ;
-  else process.env.PARALLAX_OPEN_READ = previousOpenRead;
+  if (previousOpenRead === undefined) delete process.env.PHILOTAS_OPEN_READ;
+  else process.env.PHILOTAS_OPEN_READ = previousOpenRead;
   globalThis.fetch = previousFetch;
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
@@ -230,7 +230,7 @@ after(() => {
 const requestFor = (queryString, token) =>
   new Request(
     `http://localhost/api/corpus/search?${queryString}`,
-    token ? { headers: { cookie: `parallax_session=${token}` } } : undefined
+    token ? { headers: { cookie: `philotas_session=${token}` } } : undefined
   );
 
 // A pool that answers every query with `rowCount` fabricated chunks and keeps
@@ -259,19 +259,19 @@ function installRecordingPool({ rowCount = 1, queryFailure = null } = {}) {
       },
     },
   };
-  globalThis.__parallaxCorpusRouteSeam = seam;
+  globalThis.__philotasCorpusRouteSeam = seam;
   return seam;
 }
 
-const removeSeam = () => { delete globalThis.__parallaxCorpusRouteSeam; };
+const removeSeam = () => { delete globalThis.__philotasCorpusRouteSeam; };
 
 const asSortedSet = (ids) => [...ids].sort();
 
 test('the fixtures went to the throwaway datastore, not a real one', async () => {
   assert.equal(process.env.DATABASE_URL, undefined, 'a surviving DATABASE_URL would put these fixtures in a live database');
-  assert.equal(process.env.PARALLAX_OPEN_READ, undefined, 'the refusal test below is meaningless with the read gate switched off');
+  assert.equal(process.env.PHILOTAS_OPEN_READ, undefined, 'the refusal test below is meaningless with the read gate switched off');
 
-  const scratchDatastore = path.join(tempDir, '.data', 'parallax-db.json');
+  const scratchDatastore = path.join(tempDir, '.data', 'philotas-db.json');
   assert.ok(
     fs.existsSync(scratchDatastore),
     'the file backend must be the one that took the fixtures, and it must be rooted in the temp dir'
@@ -282,7 +282,7 @@ test('the fixtures went to the throwaway datastore, not a real one', async () =>
   // runs on a clean checkout and in CI too. An absent file is itself a pass —
   // nothing reached a datastore that does not exist — and treating it as the empty
   // string says so without letting the check quietly skip.
-  const realDatastore = path.join(originalCwd, '.data', 'parallax-db.json');
+  const realDatastore = path.join(originalCwd, '.data', 'philotas-db.json');
   const realDatastoreContents = fs.existsSync(realDatastore) ? fs.readFileSync(realDatastore, 'utf8') : '';
   assert.doesNotMatch(realDatastoreContents, /route-analyst/, 'a fixture reached the real datastore');
 });
@@ -504,7 +504,7 @@ test('with no semantic store the route degrades by name instead of erroring', as
   // running against the seam while still passing — the seam delegates to the real
   // function when no pool is installed — and the header's claim about what is
   // covered here would quietly stop being true.
-  assert.equal(globalThis.__parallaxCorpusRouteSeam, undefined, 'this test must reach the real lib/db.js, not a seam');
+  assert.equal(globalThis.__philotasCorpusRouteSeam, undefined, 'this test must reach the real lib/db.js, not a seam');
 
   const res = await GET(requestFor('q=berth', analystSessionToken));
   assert.equal(res.status, 200);

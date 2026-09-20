@@ -18,6 +18,12 @@ detect/models/
 docs/internal/
 memories/
 
+# Python build artefacts from the detect/ package (setuptools writes these
+# next to the source; they are outputs, never inputs).
+detect/build/
+detect/dist/
+detect/*.egg-info/
+
 # Staging directory written by scripts/public-export.mjs. Its contents are a
 # copy of this tree, so committing it would double every file.
 .public-export/

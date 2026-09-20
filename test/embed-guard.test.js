@@ -4,7 +4,7 @@
 //
 // WHY THIS FILE EXISTS. test/embed.test.js stubs `globalThis.fetch` and asserts
 // through the real @axoquant/llm. For the MODEL PROBE that is still the right
-// seam and nothing here duplicates it: GET /v1/models is parallax's own request,
+// seam and nothing here duplicates it: GET /v1/models is philotas's own request,
 // the client has no such call, and every one of that probe's five refusals
 // (no `data` array, an empty list, a second entry, an unusable `id`, an
 // `meta.n_embd` that disagrees with EMBED_DIM) is reached from a `fetch` stub
@@ -47,7 +47,7 @@
 //     would be resolved before the hook existed.
 //
 // AND THE CONTROL. `globalThis.fetch` answers GET /v1/models and NOTHING else
-// for the whole file. The probe is parallax's own code and is what these tests
+// for the whole file. The probe is philotas's own code and is what these tests
 // have to get past to reach the vectors; every other URL — which means the
 // adapter's POST to the embeddings endpoint — throws. So if the hook ever stops
 // applying, the real adapter runs, reaches that block and raises
@@ -72,7 +72,7 @@ const clientSeamSource = `
   import { embed as realEmbed } from ${JSON.stringify(realLlmUrl)};
   export * from ${JSON.stringify(realLlmUrl)};
   export async function embed(texts, opts) {
-    const seam = globalThis.__parallaxEmbedClientSeam;
+    const seam = globalThis.__philotasEmbedClientSeam;
     if (seam) return { vectors: seam.vectors };
     return realEmbed(texts, opts);
   }
@@ -90,7 +90,7 @@ const resolverSource = `
 `;
 register(`data:text/javascript,${encodeURIComponent(resolverSource)}`, import.meta.url);
 
-// What the embedder's /v1/models answered, probed 2026-08-17. The probe is parallax's
+// What the embedder's /v1/models answered, probed 2026-08-17. The probe is philotas's
 // own request and stays real here; it is the vectors that are seamed.
 const ONE_MODEL_BODY = {
   object: 'list',
@@ -131,11 +131,11 @@ const vec = (n) => Array.from({ length: EMBED_DIM }, () => n);
 
 /** Run `fn` with the client returning `vectors` instead of calling the service. */
 const withClientVectors = async (vectors, fn) => {
-  globalThis.__parallaxEmbedClientSeam = { vectors };
+  globalThis.__philotasEmbedClientSeam = { vectors };
   try {
     return await fn();
   } finally {
-    delete globalThis.__parallaxEmbedClientSeam;
+    delete globalThis.__philotasEmbedClientSeam;
   }
 };
 
@@ -244,7 +244,7 @@ test('with nothing installed the seam delegates to the real client, so these tes
   // what this test asserts happens when no vectors are installed. It fails if
   // the seam is faking unconditionally, and the tests above fail if the seam is
   // not installed at all, so NOT APPLIED and SURVIVED cannot be confused.
-  assert.equal(globalThis.__parallaxEmbedClientSeam, undefined);
+  assert.equal(globalThis.__philotasEmbedClientSeam, undefined);
   await assert.rejects(
     () => embed(['a']),
     (err) => {
@@ -259,7 +259,7 @@ test('with nothing installed the seam delegates to the real client, so these tes
 });
 
 test('the model probe is NOT seamed, so its own guards are still reached through fetch', async () => {
-  // Pins the boundary this file draws. GET /v1/models is parallax's own request
+  // Pins the boundary this file draws. GET /v1/models is philotas's own request
   // and the client has no equivalent, so the probe's refusals stay in
   // test/embed.test.js against a `fetch` stub. If someone later routed the probe
   // through the client, this test goes red and that decision gets made

@@ -160,8 +160,8 @@ test('every call is attributed, so a slow path can be costed at the gateway', as
     return { ok: true, status: 200, json: async () => ({ results: [{ index: 0, relevance_score: 0 }] }) };
   };
   try {
-    await rerank('q', ['a'], { app: 'parallax/entities' });
-    assert.equal(seenApp, 'parallax/entities', 'unattributed calls log as "-" and cannot be costed');
+    await rerank('q', ['a'], { app: 'philotas/entities' });
+    assert.equal(seenApp, 'philotas/entities', 'unattributed calls log as "-" and cannot be costed');
   } finally {
     globalThis.fetch = realFetch;
   }
@@ -173,15 +173,15 @@ test('every call is attributed, so a slow path can be costed at the gateway', as
 // Through a `fetch` stub these tests no longer reach lib/rerank.js's own
 // validation loop. @axoquant/llm 0.3.0 validates `relevance_score` in its
 // readScores() (node_modules/@axoquant/llm/js/client.js:348-383) and throws its
-// own MalformedResponse, tagged `.malformed`, before any value reaches parallax.
+// own MalformedResponse, tagged `.malformed`, before any value reaches philotas.
 // Up to 0.2.1 it did no numeric validation at all — `scores[item.index] =
-// item.relevance_score` straight from the parsed body — and parallax's loop was
+// item.relevance_score` straight from the parsed body — and philotas's loop was
 // the only thing between the wire and a stored link decision.
 //
 // So what these tests pin is now the CLASSIFICATION: a refusal raised by the
 // CLIENT must reach a caller as RerankMalformed with `.reason ===
 // 'malformed-response'`, not flattened into the outage class by the catch in
-// lib/rerank.js. parallax's own loop is still there and still refuses each of
+// lib/rerank.js. philotas's own loop is still there and still refuses each of
 // these values itself; it is reached by replacing the client's exported rerank()
 // in test/rerank-guard.test.js, which is the only seam left now that the client
 // intercepts first.
@@ -233,7 +233,7 @@ test('a non-numeric relevance_score the client refused is classified as malforme
         // client's detail below reads identically under either classification,
         // because RerankUnavailable would wrap the same text with 'rerank
         // unavailable: '.
-        assert.match(err.message, /^rerank malformed response: /, 'parallax says which of its own two states this is');
+        assert.match(err.message, /^rerank malformed response: /, 'philotas says which of its own two states this is');
         // The client's wording, asserted for PRESERVATION rather than for
         // classification: an operator still needs to know which document came
         // back wrong and in what shape, and re-wrapping must not discard it.
@@ -251,7 +251,7 @@ test('each non-finite logit shape refused by the client is classified as malform
   // refused there too — and if either layer were written as
   // `typeof score === 'number'` those three would pass and sigmoid would return
   // NaN, 1 and 0, the last two being confident wrong answers rather than errors.
-  // That each value is refused BY PARALLAX'S OWN LOOP is a different claim, and
+  // That each value is refused BY PHILOTAS'S OWN LOOP is a different claim, and
   // it is pinned in test/rerank-guard.test.js against the same six rows.
   const rows = [
     ['NaN', NaN],
@@ -294,7 +294,7 @@ test('a genuine zero logit is a valid score of exactly 0.5, not a malformed resp
 test('one score the client refused refuses the whole batch rather than quietly dropping that document', async () => {
   // KILLS: the missing `err.malformed` re-throw again, on a batch rather than a
   // single document — this is the shape the corpus search path actually sends.
-  // The refusal itself comes from the client here; that parallax's own loop
+  // The refusal itself comes from the client here; that philotas's own loop
   // refuses the whole batch rather than filtering the bad entries out
   // (`logits.filter(Number.isFinite)`) or mapping them to a default is pinned in
   // test/rerank-guard.test.js.
@@ -328,7 +328,7 @@ test('one score the client refused refuses the whole batch rather than quietly d
         (err) => {
           assert.equal(err.malformed, true);
           assert.equal(err.reason, 'malformed-response', 'not the outage reason');
-          assert.match(err.message, /^rerank malformed response: /, "parallax's own prefix, not the client's text alone");
+          assert.match(err.message, /^rerank malformed response: /, "philotas's own prefix, not the client's text alone");
           assert.match(err.message, /index 2/, 'the offending position survives the re-wrap, so it is not a guessing game');
           return true;
         },

@@ -22,8 +22,8 @@
 // Same import discipline as test/corpus-scope.test.js and test/db.test.js:
 // DATABASE_URL is set to an unusable value and then deleted, and the cwd moves to
 // a throwaway directory, both BEFORE lib/db.js is imported, because it picks its
-// backend and its file path at import time (lib/db.js:11). PARALLAX_OPEN_READ,
-// PARALLAX_TRIAL and PARALLAX_MARKINGS go too, so a surrounding shell cannot
+// backend and its file path at import time (lib/db.js:11). PHILOTAS_OPEN_READ,
+// PHILOTAS_TRIAL and PHILOTAS_MARKINGS go too, so a surrounding shell cannot
 // switch off the thing under test. Nothing in this file dials a database.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -65,18 +65,18 @@ const occurrences = (haystack, needle) => haystack.split(needle).length - 1;
 // race the import against the seed. Same note as test/corpus-scope.test.js.
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-teams-test-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-teams-test-'));
 
   previousDatabaseUrl = process.env.DATABASE_URL;
-  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/parallax-must-not-connect';
+  process.env.DATABASE_URL = 'postgres://unused:unused@127.0.0.1:1/philotas-must-not-connect';
   delete process.env.DATABASE_URL;
 
-  previousOpenRead = process.env.PARALLAX_OPEN_READ;
-  delete process.env.PARALLAX_OPEN_READ;
-  previousTrial = process.env.PARALLAX_TRIAL;
-  delete process.env.PARALLAX_TRIAL;
-  previousMarkings = process.env.PARALLAX_MARKINGS;
-  delete process.env.PARALLAX_MARKINGS;
+  previousOpenRead = process.env.PHILOTAS_OPEN_READ;
+  delete process.env.PHILOTAS_OPEN_READ;
+  previousTrial = process.env.PHILOTAS_TRIAL;
+  delete process.env.PHILOTAS_TRIAL;
+  previousMarkings = process.env.PHILOTAS_MARKINGS;
+  delete process.env.PHILOTAS_MARKINGS;
 
   process.chdir(tempDir);
 
@@ -100,18 +100,18 @@ after(() => {
   process.chdir(originalCwd);
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
-  if (previousOpenRead === undefined) delete process.env.PARALLAX_OPEN_READ;
-  else process.env.PARALLAX_OPEN_READ = previousOpenRead;
-  if (previousTrial === undefined) delete process.env.PARALLAX_TRIAL;
-  else process.env.PARALLAX_TRIAL = previousTrial;
-  if (previousMarkings === undefined) delete process.env.PARALLAX_MARKINGS;
-  else process.env.PARALLAX_MARKINGS = previousMarkings;
+  if (previousOpenRead === undefined) delete process.env.PHILOTAS_OPEN_READ;
+  else process.env.PHILOTAS_OPEN_READ = previousOpenRead;
+  if (previousTrial === undefined) delete process.env.PHILOTAS_TRIAL;
+  else process.env.PHILOTAS_TRIAL = previousTrial;
+  if (previousMarkings === undefined) delete process.env.PHILOTAS_MARKINGS;
+  else process.env.PHILOTAS_MARKINGS = previousMarkings;
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
 test('the fixtures went to the throwaway datastore, not a real one', () => {
   assert.equal(process.env.DATABASE_URL, undefined, 'a surviving DATABASE_URL would put these fixtures in a live database');
-  const scratch = path.join(tempDir, '.data', 'parallax-db.json');
+  const scratch = path.join(tempDir, '.data', 'philotas-db.json');
   assert.ok(fs.existsSync(scratch), 'the file backend wrote the fixtures under the temp directory');
   const written = JSON.parse(fs.readFileSync(scratch, 'utf8'));
   assert.deepEqual(

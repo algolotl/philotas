@@ -17,7 +17,7 @@ export function startStubApi({ statusCode = 200, requireAuth = false, username =
         if (req.method !== 'POST') return send(405, { error: 'method not allowed' });
         res.writeHead(200, {
           'Content-Type': 'application/json',
-          'Set-Cookie': 'parallax_session=stub-session; HttpOnly; Path=/; SameSite=Lax',
+          'Set-Cookie': 'philotas_session=stub-session; HttpOnly; Path=/; SameSite=Lax',
         });
         return res.end(JSON.stringify({ user: { username: 'guest' } }));
       }
@@ -33,7 +33,7 @@ export function startStubApi({ statusCode = 200, requireAuth = false, username =
           if (parsed.username === username && parsed.password === password) {
             res.writeHead(200, {
               'Content-Type': 'application/json',
-              'Set-Cookie': 'parallax_session=stub-session; HttpOnly; Path=/; SameSite=Lax',
+              'Set-Cookie': 'philotas_session=stub-session; HttpOnly; Path=/; SameSite=Lax',
             });
             res.end(JSON.stringify({ user: { username } }));
           } else {
@@ -43,7 +43,7 @@ export function startStubApi({ statusCode = 200, requireAuth = false, username =
         return;
       }
       if (url.pathname === '/api/status') {
-        if (requireAuth && (req.headers.cookie || '') !== 'parallax_session=stub-session') {
+        if (requireAuth && (req.headers.cookie || '') !== 'philotas_session=stub-session') {
           return send(401, { error: 'authentication required' });
         }
         if (statusCode !== 200) return send(statusCode, { error: 'status failed' });

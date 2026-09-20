@@ -85,7 +85,7 @@ const unchangedSource = (id, label) => ({
 });
 
 async function tempCacheFile(name) {
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'parallax-sat-'));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'philotas-sat-'));
   return path.join(dir, name);
 }
 

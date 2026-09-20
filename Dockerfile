@@ -1,4 +1,4 @@
-# Parallax — production container.
+# Philotas — production container.
 # Multi-stage: build with full deps, then run. Persist the datastore by mounting
 # a volume at /app/.data (users, sessions, shared workspaces live there).
 

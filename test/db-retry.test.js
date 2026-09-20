@@ -42,7 +42,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 // Deliberately unparseable as a DSN: no scheme, no host, no port, no password.
-const NOT_A_CONNECTION_STRING = 'parallax-pg-loader-stub-only-never-dialled';
+const NOT_A_CONNECTION_STRING = 'philotas-pg-loader-stub-only-never-dialled';
 const REFUSED = 'connect ECONNREFUSED 127.0.0.1:1';
 const STUB_USER_COUNT = 7;
 
@@ -55,12 +55,12 @@ const pgStubSource = `
   export default {
     Pool: class Pool {
       constructor(config) {
-        const stub = globalThis.__parallaxPgStub;
+        const stub = globalThis.__philotasPgStub;
         stub.constructed.push(config);
         this.poolId = stub.constructed.length;
       }
       async query(text, params) {
-        const stub = globalThis.__parallaxPgStub;
+        const stub = globalThis.__philotasPgStub;
         stub.queries.push({ poolId: this.poolId, text, params });
         if (stub.connectFailure) {
           throw Object.assign(new Error(stub.connectFailure), { code: 'ECONNREFUSED', port: 1 });
@@ -93,13 +93,13 @@ let semanticPool;
 
 before(async () => {
   originalCwd = process.cwd();
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'parallax-db-retry-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'philotas-db-retry-'));
   previousDatabaseUrl = process.env.DATABASE_URL;
 
   // Armed from the outset. See the header: the very first init() in this process
   // has to be the one that fails, or the memoisation is never exercised.
   stub = { constructed: [], queries: [], connectFailure: REFUSED, userCount: STUB_USER_COUNT };
-  globalThis.__parallaxPgStub = stub;
+  globalThis.__philotasPgStub = stub;
 
   // Overwritten, never read: whatever this box has configured is irrelevant and
   // must not reach the import below, which is the only moment lib/db.js looks at
@@ -115,7 +115,7 @@ after(() => {
   process.chdir(originalCwd);
   if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
   else process.env.DATABASE_URL = previousDatabaseUrl;
-  delete globalThis.__parallaxPgStub;
+  delete globalThis.__philotasPgStub;
   fs.rmSync(tempDir, { recursive: true, force: true });
 });
 

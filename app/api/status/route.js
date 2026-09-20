@@ -93,7 +93,7 @@ export async function GET(req) {
       // `connect ECONNREFUSED <host>:<port>`, which is the host and port of
       // DATABASE_URL. The read gate above is viewer-level, so without this a
       // logged-in viewer read it — on a public trial, the guest account — and
-      // with PARALLAX_OPEN_READ=1 (lib/guard.js:18) anyone at all did.
+      // with PHILOTAS_OPEN_READ=1 (lib/guard.js:18) anyone at all did.
       //
       // atLeast is lib/auth.js's rank check, the same one lib/guard.js uses, so
       // there is one notion of role in the build and admin is covered by being

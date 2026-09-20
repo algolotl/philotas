@@ -5,7 +5,7 @@ import { atLeast } from '../lib/auth.js';
 // atLeast() is the single choke point every route guard calls through
 // (see lib/guard.js). Importing lib/auth.js pulls in lib/db.js as a side
 // effect, but merely importing db.js does not touch the filesystem — the
-// file backend only opens .data/parallax-db.json when a db call is actually
+// file backend only opens .data/philotas-db.json when a db call is actually
 // made, and nothing here makes one. Safe to run against the real cwd.
 
 test('viewer ranks below operator and admin', () => {
